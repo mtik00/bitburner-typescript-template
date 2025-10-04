@@ -1,6 +1,12 @@
 export function getThreads(ns, script, server, script_host = "home") {
     const scriptRam = ns.getScriptRam(script, script_host);
-    const serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+    let serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+
+    // Keep 8GB of RAM for home
+    if (server == "home") {
+        serverAvailableRam -= 8;
+    }
+
     const threads = Math.floor(serverAvailableRam / scriptRam);
 
     ns.tprintf("scriptRam: %s", scriptRam);
@@ -24,6 +30,10 @@ export function getConnectedServers(ns, server, ignore = "home") {
 }
 
 export function runApps(ns, target) {
+    if (target == "home") {
+        return 99;
+    }
+
     let portCount = 0;
     if (ns.fileExists("BruteSSH.exe")) {
         ns.brutessh(target);
@@ -78,7 +88,7 @@ export function execHack(ns, server, script, script_host = "home", force = false
     }
 
     try {
-        ns.nuke(server);
+        (server !== "home") && ns.nuke(server);
     } catch (error) {
         ns.tprintf("Can't nuke %s: %s", server, error);
         if (!force) {
