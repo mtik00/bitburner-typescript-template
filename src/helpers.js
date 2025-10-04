@@ -1,4 +1,4 @@
-export function getThreads(ns, script, server, script_host="home") {
+export function getThreads(ns, script, server, script_host = "home") {
     const scriptRam = ns.getScriptRam(script, script_host);
     const serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
     const threads = Math.floor(serverAvailableRam / scriptRam);
@@ -10,7 +10,7 @@ export function getThreads(ns, script, server, script_host="home") {
     return threads;
 }
 
-export function getConnectedServers(ns, server, ignore="home") {
+export function getConnectedServers(ns, server, ignore = "home") {
     var servers = [];
     var cur = ns.scan(server);
     cur.forEach(new_server => {
@@ -53,7 +53,7 @@ export function runApps(ns, target) {
     return portCount;
 }
 
-export function execHack(ns, server, script, script_host="home", force=false) {
+export function execHack(ns, server, script, script_host = "home", force = false) {
 
     // We only need to run as many threads as possible on home.  We don't care
     // about rooting the server.
@@ -62,7 +62,6 @@ export function execHack(ns, server, script, script_host="home", force=false) {
     }
 
     ns.tprintf("---- Executing hack on %s", server);
-    ns.tprintf("force: %s", force);
 
     const needLevel = ns.getServerRequiredHackingLevel(server);
     if (needLevel > ns.getHackingLevel()) {
@@ -88,7 +87,7 @@ export function execHack(ns, server, script, script_host="home", force=false) {
     }
 
     const threads = getThreads(ns, script, server, script_host);
-    
+
     if (threads < 1) {
         ns.tprintf("Not enough RAM left on %s to run %s", server, script);
     } else {
@@ -102,7 +101,7 @@ export function execHack(ns, server, script, script_host="home", force=false) {
  * @param {NS} ns The nestcript instance passed to your script's main entry point
  * @param {boolean} all True: return all servers found; False: only returned rooted servers w/ money
  * @returns {string[]} **/
-export function scanAllServers(ns, all=true) {
+export function scanAllServers(ns, all = true) {
     let returnHosts = [];
     let discoveredHosts = []; // Hosts (a.k.a. servers) we have scanned
     let hostsToScan = ["home"]; // Hosts we know about, but have no yet scanned
