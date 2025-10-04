@@ -10,9 +10,11 @@
 2. Root joesguns:  `run nuke.js --target joesguns`
 3. Start the scripts: `run startup.js`
 
-Occasionally, at least after each new program is created, use `run startup.js` to hack new targets.
+Periodically:
 
-Occasionlly run `./purchase_servers.js`, until you've maxed them out.
+- at least after each new program is created, use `run startup.js` to hack new targets.
+- run `./purchaseServers.js`, until you've maxed them out.
+- run `./upgradeServer.js` to upgrade your puchased server(s) with more RAM
 
 - Head to Alpha Enterprises and purchase the TOR router
 - Use the `buy` command in your terminal (`buy -l`)

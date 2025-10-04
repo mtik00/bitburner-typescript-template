@@ -11,9 +11,9 @@ export function getThreads(ns: NS, script: string, server: string, script_host =
 
     const threads = Math.floor(serverAvailableRam / scriptRam);
 
-    ns.tprintf("scriptRam: %s", scriptRam);
-    ns.tprintf("serverAvailableRam: %s", serverAvailableRam);
-    ns.tprintf("threads: %s; for host: %s", threads, server);
+    // ns.tprintf("scriptRam: %s", scriptRam);
+    // ns.tprintf("serverAvailableRam: %s", serverAvailableRam);
+    // ns.tprintf("threads: %s; for host: %s", threads, server);
 
     return threads;
 }
@@ -93,8 +93,6 @@ export function openServer(ns: NS, server: string, force: boolean = false) {
 
 export function execHack(ns: NS, server: string, script: string, script_host = "home", force = false) {
 
-    ns.tprintf("---- Executing hack on %s", server);
-
     const needLevel = ns.getServerRequiredHackingLevel(server);
     if (needLevel > ns.getHackingLevel()) {
         ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", server, needLevel);
@@ -110,6 +108,7 @@ export function execHack(ns: NS, server: string, script: string, script_host = "
     if (threads < 1) {
         ns.tprintf("Not enough RAM left on %s to run %s", server, script);
     } else {
+        ns.tprintf("---- Executing hack on %s", server);
         ns.scp(script, server);
         ns.exec(script, server, threads);
         ns.tprintf("executed %s on %s with -t=%s", script, server, threads);
