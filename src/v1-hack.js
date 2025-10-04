@@ -1,13 +1,14 @@
 const argsSchema = [
-    ['tartget', 'joesguns'],
+    ['target', 'joesguns'],
 ];
 
+/** @param {NS} ns */
 export async function main(ns) {
     const options = ns.flags(argsSchema);
     const target = options.target;
 
     ns.tprintf("hacking server: %s from %s", target, ns.getHostname());
-    
+
     const moneyThresh = ns.getServerMaxMoney(target);
 
     // Defines the minimum security level the target server can
@@ -16,7 +17,7 @@ export async function main(ns) {
     const securityThresh = ns.getServerMinSecurityLevel(target);
 
     // Infinite loop that continously hacks/grows/weakens the target server
-    while(true) {
+    while (true) {
         if (ns.getServerSecurityLevel(target) > securityThresh) {
             // If the server's security level is above our threshold, weaken it
             await ns.weaken(target);
