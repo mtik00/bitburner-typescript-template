@@ -20,7 +20,7 @@ export async function main(ns: NS) {
 
     ns.printf("Purchasing up to %i servers with %iGB RAM", serverLimit, ram);
 
-    let i = 0;
+    let i = purchasedServers.length;
 
     // Continuously try to purchase servers until we've reached the maximum
     // amount of servers
