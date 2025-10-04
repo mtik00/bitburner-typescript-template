@@ -1,13 +1,12 @@
+// @ts-nocheck
+import { NS } from "@ns";
 import { getThreads } from './helpers.js'
 
-const argsSchema = [
-    ['script', 'v1-hack.js'],
-    ['ram', 8]
-];
-
-/** @param {NS} ns */
-export async function main(ns) {
-    const options = ns.flags(argsSchema);
+export async function main(ns: NS) {
+    const options = ns.flags([
+        ['script', 'v1-hack.js'],
+        ['ram', 8]
+    ]);
 
     const ram = options.ram;
     const hack_script = options.script;
@@ -15,8 +14,8 @@ export async function main(ns) {
     const purchasedServers = ns.getPurchasedServers();
 
     if (purchasedServers.length >= serverLimit) {
-      ns.tprintf("ERROR: You have purchased the maximum number of servers");
-      return;
+        ns.tprintf("ERROR: You have purchased the maximum number of servers");
+        return;
     }
 
     ns.printf("Purchasing up to %i servers with %iGB RAM", serverLimit, ram);

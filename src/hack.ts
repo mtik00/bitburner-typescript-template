@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { NS } from "@ns";
 import { execHack } from './helpers.js'
 
 const argsSchema = [
@@ -6,7 +8,7 @@ const argsSchema = [
     ['force', false]
 ];
 
-export async function main(ns) {
+export async function main(ns: NS) {
     const options = ns.flags(argsSchema);
 
     if (options.server.length === 0) {

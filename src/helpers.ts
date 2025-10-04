@@ -1,4 +1,6 @@
-export function getThreads(ns, script, server, script_host = "home") {
+import { NS } from "@ns";
+
+export function getThreads(ns: NS, script: string, server: string, script_host = "home") {
     const scriptRam = ns.getScriptRam(script, script_host);
     let serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
 
@@ -16,8 +18,8 @@ export function getThreads(ns, script, server, script_host = "home") {
     return threads;
 }
 
-export function getConnectedServers(ns, server, ignore = "home") {
-    var servers = [];
+export function getConnectedServers(ns: NS, server: string, ignore = "home") {
+    var servers: string[] = [];
     var cur = ns.scan(server);
     cur.forEach(new_server => {
         if (new_server !== ignore && new_server !== server) {
@@ -29,7 +31,7 @@ export function getConnectedServers(ns, server, ignore = "home") {
     return servers;
 }
 
-export function runApps(ns, target) {
+export function runApps(ns: NS, target: string) {
     if (target == "home") {
         return 99;
     }
@@ -63,13 +65,33 @@ export function runApps(ns, target) {
     return portCount;
 }
 
-export function execHack(ns, server, script, script_host = "home", force = false) {
-
-    // We only need to run as many threads as possible on home.  We don't care
-    // about rooting the server.
-    if (server === "home") {
-        force = true;
+export function openServer(ns: NS, server: string, force: boolean = false) {
+    if ((server === "home") || server.startsWith("pserv")) {
+        return true;
     }
+
+    // NOTE: You have to run the apps to open ports before you run NUKE.exe
+    const portCount = runApps(ns, server);
+    const requiredPorts = ns.getServerNumPortsRequired(server);
+
+    if (requiredPorts > portCount && !force) {
+        ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, server, requiredPorts);
+        return false;
+    }
+
+    try {
+        ns.nuke(server);
+    } catch (error) {
+        ns.tprintf("Can't nuke %s: %s", server, error);
+        if (!force) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+export function execHack(ns: NS, server: string, script: string, script_host = "home", force = false) {
 
     ns.tprintf("---- Executing hack on %s", server);
 
@@ -79,21 +101,8 @@ export function execHack(ns, server, script, script_host = "home", force = false
         return;
     }
 
-    const portCount = runApps(ns, server);
-    const requiredPorts = ns.getServerNumPortsRequired(server);
-
-    if (requiredPorts > portCount && !force) {
-        ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, server, requiredPorts);
+    if (!openServer(ns, server, force)) {
         return;
-    }
-
-    try {
-        (server !== "home") && ns.nuke(server);
-    } catch (error) {
-        ns.tprintf("Can't nuke %s: %s", server, error);
-        if (!force) {
-            return
-        }
     }
 
     const threads = getThreads(ns, script, server, script_host);
@@ -111,15 +120,20 @@ export function execHack(ns, server, script, script_host = "home", force = false
  * @param {NS} ns The nestcript instance passed to your script's main entry point
  * @param {boolean} all True: return all servers found; False: only returned rooted servers w/ money
  * @returns {string[]} **/
-export function scanAllServers(ns, all = true) {
+export function scanAllServers(ns: NS, all = true) {
     let returnHosts = [];
     let discoveredHosts = []; // Hosts (a.k.a. servers) we have scanned
     let hostsToScan = ["home"]; // Hosts we know about, but have no yet scanned
     let infiniteLoopProtection = 9999; // In case you mess with this code, this should save you from getting stuck
     while (hostsToScan.length > 0 && infiniteLoopProtection-- > 0) { // Loop until the list of hosts to scan is empty
         let hostName = hostsToScan.pop(); // Get the next host to be scanned
+
+        if (typeof hostName !== "string") {
+            continue
+        }
+
         discoveredHosts.push(hostName); // Mark this host as "scanned"
-        if (all || (ns.hasRootAccess(hostName) && parseInt(ns.getServerMaxMoney(hostName)) > 0)) {
+        if (all || (ns.hasRootAccess(hostName) && (ns.getServerMaxMoney(hostName) > 0))) {
             returnHosts.push(hostName);
         }
         for (const connectedHost of ns.scan(hostName)) // "scan" (list all hosts connected to this one)
@@ -129,6 +143,12 @@ export function scanAllServers(ns, all = true) {
     return returnHosts; // The list of scanned hosts should now be the set of all hosts in the game!
 }
 
-export async function main(ns) {
+export function assertType(value: any, type: string) {
+    if (typeof value !== type) {
+        throw new Error("Value must be a " + type);
+    }
+}
+
+export async function main(ns: NS) {
     getThreads(ns, "v1-hack.js", "home")
 }

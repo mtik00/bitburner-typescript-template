@@ -1,9 +1,11 @@
+// @ts-nocheck
+import { NS } from "@ns";
+
 const argsSchema = [
     ['target', 'joesguns'],
 ];
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
     const options = ns.flags(argsSchema);
     const target = options.target;
 
