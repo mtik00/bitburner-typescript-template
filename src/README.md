@@ -7,8 +7,8 @@
 # New game steps
 
 1. Study computer science until Hacking level 10
-2. Root joesguns:  `run nuke.js --target joesguns`
-3. Start the scripts: `run startup.js`
+2. Root joesguns:  `./nuke.js --target joesguns`
+3. Start the scripts: `./startup.js`
 
 Periodically:
 

@@ -38,7 +38,7 @@ function get_server_data(ns, server) {
 }
 
 export async function main(ns) {
-    var servers = scanAllServers(ns, all = false)
+    var servers = scanAllServers(ns, false)
     var stats = {}
     // For each server in servers, get the server data and add to our Hash Table.
     for (var server of servers) {

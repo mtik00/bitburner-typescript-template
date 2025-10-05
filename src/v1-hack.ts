@@ -2,7 +2,7 @@
 import { NS } from "@ns";
 
 const argsSchema = [
-    ['target', 'joesguns'],
+    ['target', 'netlink'],
 ];
 
 export async function main(ns: NS) {
