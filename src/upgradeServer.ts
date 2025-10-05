@@ -5,18 +5,18 @@ import { getThreads } from './helpers.js'
 /*
 This script used to replace a purchased server with a server with more RAM.
 
-The default is to double the RAM.  You can specify exact ram using `--ram`.
+The default is to double the RAM and keep the same script+args.  You can specify exact ram using `--ram`.
 
-Run `./purchasedServerInfo.js` to view current servers and RAM.
+Run `./purchasedServerInfo.js` to view current servers, RAM, and actions.
 */
 export async function main(ns: NS) {
     const options = ns.flags([
         ['server', ''],
         ['script', 'v1-hack.js'],
+        ['target', 'n00dles'],
         ['ram', 0],
     ]);
 
-    const hack_script = options.script.toString();
     const server = options.server.toString();
     const availableMoney = ns.getServerMoneyAvailable("home")
 
@@ -31,6 +31,14 @@ export async function main(ns: NS) {
     const currentRam = ns.getServerMaxRam(server)
     const ram = options.ram > 0 ? options.ram : currentRam * 2
     const serverCost = ns.getPurchasedServerCost(ram)
+    const processes = ns.ps(server)
+    let script = options.script
+    let args: string[] = ["--target", options.target]
+
+    if (processes.length > 0) {
+        script = processes[0].filename
+        args = processes[0].args
+    }
 
     if (ns.getServerMaxRam(server) >= ram) {
         ns.tprintf("ERROR: Server %s already has %s RAM", server, ns.formatRam(ram, 0))
@@ -56,9 +64,9 @@ export async function main(ns: NS) {
     ns.deleteServer(server)
     ns.purchaseServer(server, ram)
 
-    let threads = getThreads(ns, hack_script, server);
+    let threads = getThreads(ns, script, server);
 
-    ns.printf("hacking %s with %s and %i threads", server, hack_script, threads);
-    ns.scp(hack_script, server);
-    ns.exec(hack_script, server, threads);
+    ns.printf("hacking %s with %s and %i threads", server, script, threads);
+    ns.scp(script, server);
+    ns.exec(script, server, threads, ...args);
 }
