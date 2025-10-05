@@ -115,6 +115,10 @@ export function execHack(
     }
 
     const hostServer = host === '' ? target : host
+    if (!openServer(ns, hostServer, force)) {
+        return
+    }
+
     const threads = getThreads(ns, script, hostServer)
 
     if (threads < 1) {
@@ -123,7 +127,7 @@ export function execHack(
         ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
         ns.scp(script, hostServer);
         ns.exec(script, hostServer, threads, "--target", target);
-        ns.tprintf("executed %s on %s with -t=%s", script, hostServer, threads);
+        ns.tprintf("executed %s on %s targeting %s with -t=%s", script, hostServer, target, threads);
     }
 }
 
