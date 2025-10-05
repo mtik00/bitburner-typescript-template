@@ -115,13 +115,13 @@ export function execHack(
     }
 
     const hostServer = host === '' ? target : host
-    const threads = getThreads(ns, script, hostServer, script_host)
+    const threads = getThreads(ns, script, hostServer)
 
     if (threads < 1) {
         ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
     } else {
         ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
-        ns.scp(script, target);
+        ns.scp(script, hostServer);
         ns.exec(script, hostServer, threads, "--target", target);
         ns.tprintf("executed %s on %s with -t=%s", script, hostServer, threads);
     }
@@ -162,4 +162,17 @@ export function assertType(value: any, type: string) {
 
 export async function main(ns: NS) {
     getThreads(ns, "v1-hack.js", "home")
+}
+
+export function getServerAction(ns: NS, host: string) {
+    /*
+    Gets the first action in the list and returns it.
+    */
+    var actions = ns.ps(host)
+
+    if (actions.length == 0) {
+        return null
+    }
+
+    return ns.sprintf("%s %s", actions[0].filename, actions[0].args.join(" "))
 }

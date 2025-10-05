@@ -5,18 +5,23 @@ import { execHack, getThreads } from './helpers.js'
 export async function main(ns: NS) {
     const options = ns.flags([
         ['script', 'v1-hack.js'],
-        ['ram', 16]
+        ['ram', 128],
+        ['target', ''],
     ]);
 
-    const ram = options.ram;
-    const hack_script = options.script;
-    const serverLimit = ns.getPurchasedServerLimit();
-    const purchasedServers = ns.getPurchasedServers();
+    const ram = options.ram
+    const hack_script = options.script
+    const target = options.target.toString()
+    const serverLimit = ns.getPurchasedServerLimit()
+    const purchasedServers = ns.getPurchasedServers()
     const serverCost = ns.getPurchasedServerCost(ram)
 
     if (purchasedServers.length >= serverLimit) {
-        ns.tprintf("ERROR: You have purchased the maximum number of servers");
-        return;
+        ns.tprintf("ERROR: You have purchased the maximum number of servers")
+        return
+    } else if (target === '') {
+        ns.tprint("USAGE: ./purchaseServer.ts --target <hostname>")
+        return
     }
 
     ns.printf("Purchasing up to %i servers with %iGB RAM", serverLimit, ram);
@@ -36,7 +41,8 @@ export async function main(ns: NS) {
             const svr_name = ns.sprintf("pserv-%03i", i + 1)
             const hostname = ns.purchaseServer(svr_name, ram)
 
-            execHack(ns, hostname, hack_script, "home", true)
+            execHack(ns, target, hack_script, "home", false, hostname);
+
             ++i;
         }
         //Make the script wait for a second before looping again.

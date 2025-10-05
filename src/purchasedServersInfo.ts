@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { NS } from "@ns";
+import { getServerAction } from "helpers"
 
 export async function main(ns: NS) {
 
@@ -7,6 +8,7 @@ export async function main(ns: NS) {
     for (let index = 0; index < purchasedServers.length; index++) {
         const server = purchasedServers[index];
         const ram = ns.getServerMaxRam(server);
-        ns.tprintf("%s: %s", server, ns.formatRam(ram))
+        const action = getServerAction(ns, server)
+        ns.tprintf("%s: %s %s", server, ns.formatRam(ram), action)
     }
 }

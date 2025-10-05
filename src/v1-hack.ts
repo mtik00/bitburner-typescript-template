@@ -7,6 +7,11 @@ export async function main(ns: NS) {
     ]);
     const target = options.target.toString()
 
+    if (target === "home" || target.toString().startsWith("pserv")) {
+        ns.tprint("ERROR: You cannot hack your own server:", target)
+        return
+    }
+
     ns.tprintf("hacking server: %s from %s", target, ns.getHostname());
 
     const moneyThresh = ns.getServerMaxMoney(target);
