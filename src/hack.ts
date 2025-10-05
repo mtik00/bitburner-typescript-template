@@ -3,18 +3,19 @@ import { NS } from "@ns";
 import { execHack } from './helpers.js'
 
 const argsSchema = [
-    ['server', ''],
+    ['target', ''],
     ['script', 'v1-hack.js'],
-    ['force', false]
+    ['force', false],
+    ['host', ''],
 ];
 
 export async function main(ns: NS) {
     const options = ns.flags(argsSchema);
 
-    if (options.server.length === 0) {
-        ns.tprint("USAGE: hack --server <server>");
+    if (options.target.length === 0) {
+        ns.tprint("USAGE: hack --target <target>");
         return
     }
 
-    execHack(ns, options.server, options.script, "home", options.force);
+    execHack(ns, options.target, options.script, "home", options.force, options.host);
 }

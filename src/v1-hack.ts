@@ -1,13 +1,11 @@
-// @ts-nocheck
+
 import { NS } from "@ns";
 
-const argsSchema = [
-    ['target', 'netlink'],
-];
-
 export async function main(ns: NS) {
-    const options = ns.flags(argsSchema);
-    const target = options.target;
+    const options = ns.flags([
+        ['target', 'n00dles'],
+    ]);
+    const target = options.target.toString()
 
     ns.tprintf("hacking server: %s from %s", target, ns.getHostname());
 

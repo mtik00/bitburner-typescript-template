@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 
-export function getThreads(ns: NS, script: string, server: string, script_host = "home") {
-    const scriptRam = ns.getScriptRam(script, script_host);
+export function getThreads(ns: NS, script: string, server: string) {
+    const scriptRam = ns.getScriptRam(script);
     let serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
 
     // Keep 8GB of RAM for home
@@ -65,24 +65,24 @@ export function runApps(ns: NS, target: string) {
     return portCount;
 }
 
-export function openServer(ns: NS, server: string, force: boolean = false) {
-    if ((server === "home") || server.startsWith("pserv")) {
+export function openServer(ns: NS, target: string, force: boolean = false) {
+    if ((target === "home") || target.startsWith("pserv")) {
         return true;
     }
 
     // NOTE: You have to run the apps to open ports before you run NUKE.exe
-    const portCount = runApps(ns, server);
-    const requiredPorts = ns.getServerNumPortsRequired(server);
+    const portCount = runApps(ns, target);
+    const requiredPorts = ns.getServerNumPortsRequired(target);
 
     if (requiredPorts > portCount && !force) {
-        ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, server, requiredPorts);
+        ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, target, requiredPorts);
         return false;
     }
 
     try {
-        ns.nuke(server);
+        ns.nuke(target);
     } catch (error) {
-        ns.tprintf("Can't nuke %s: %s", server, error);
+        ns.tprintf("Can't nuke %s: %s", target, error);
         if (!force) {
             return false;
         }
@@ -91,27 +91,39 @@ export function openServer(ns: NS, server: string, force: boolean = false) {
     return true;
 }
 
-export function execHack(ns: NS, server: string, script: string, script_host = "home", force = false) {
+export function execHack(
+    ns: NS,
+    target: string,
+    script: string,
+    script_host = "home",
+    force = false,
+    host = '',
+) {
 
-    const needLevel = ns.getServerRequiredHackingLevel(server);
+    if (target === "home") {
+        return
+    }
+
+    const needLevel = ns.getServerRequiredHackingLevel(target);
     if (needLevel > ns.getHackingLevel()) {
-        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", server, needLevel);
+        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, needLevel);
         return;
     }
 
-    if (!openServer(ns, server, force)) {
+    if (!openServer(ns, target, force)) {
         return;
     }
 
-    const threads = getThreads(ns, script, server, script_host);
+    const hostServer = host === '' ? target : host
+    const threads = getThreads(ns, script, hostServer, script_host)
 
     if (threads < 1) {
-        ns.tprintf("Not enough RAM left on %s to run %s", server, script);
+        ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
     } else {
-        ns.tprintf("---- Executing hack on %s", server);
-        ns.scp(script, server);
-        ns.exec(script, server, threads);
-        ns.tprintf("executed %s on %s with -t=%s", script, server, threads);
+        ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
+        ns.scp(script, target);
+        ns.exec(script, hostServer, threads, "--target", target);
+        ns.tprintf("executed %s on %s with -t=%s", script, hostServer, threads);
     }
 }
 
