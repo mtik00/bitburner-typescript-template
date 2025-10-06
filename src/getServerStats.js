@@ -40,14 +40,16 @@ function get_server_data(ns, server) {
 export async function main(ns) {
     var servers = scanAllServers(ns, false)
     var stats = {}
+
     // For each server in servers, get the server data and add to our Hash Table.
     for (var server of servers) {
         stats[parseInt(ns.getServerMaxMoney(server))] = get_server_data(ns, server)
     }
+
     // Sort each server based on how much money it holds.
     var keys = Object.keys(stats)
     keys.sort((a, b) => a - b)
-    // Print the results
+
     for (var i in keys) {
         var key = keys[i]
         ns.tprint(stats[key])

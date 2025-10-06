@@ -20,8 +20,8 @@ export async function main(ns: NS) {
     const server = options.server.toString();
     const availableMoney = ns.getServerMoneyAvailable("home")
 
-    if (server.length === 0) {
-        ns.tprint("USAGE: upgradeServer.js --server <name>");
+    if (server === "") {
+        ns.tprint(`USAGE: ${ns.getScriptName()} --server <name>`);
         return
     } else if (!ns.getPurchasedServers().includes(server)) {
         ns.tprint("ERROR: You have not purchased: ", server)

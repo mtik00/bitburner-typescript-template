@@ -41,7 +41,7 @@ export async function main(ns: NS) {
             const svr_name = ns.sprintf("pserv-%03i", i + 1)
             const hostname = ns.purchaseServer(svr_name, ram)
 
-            execHack(ns, target, hack_script, "home", false, hostname);
+            execHack(ns, target, hack_script, false, hostname);
 
             ++i;
         }

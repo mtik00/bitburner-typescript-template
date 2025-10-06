@@ -15,6 +15,6 @@ export async function main(ns: NS): Promise<void> {
 
   const servers = scanAllServers(ns);
   for (let i = 0; i < servers.length; ++i) {
-    execHack(ns, options.target, options.script, "home", false, servers[i]);
+    execHack(ns, options.target, options.script, false, servers[i]);
   }
 }

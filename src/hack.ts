@@ -17,5 +17,5 @@ export async function main(ns: NS) {
         return
     }
 
-    execHack(ns, options.target, options.script, "home", options.force, options.host);
+    execHack(ns, options.target, options.script, options.force, options.host);
 }

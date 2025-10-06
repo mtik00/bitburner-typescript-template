@@ -1,12 +1,25 @@
 import { NS } from "@ns";
 
-export function getThreads(ns: NS, script: string, server: string) {
+/**
+ * 
+ * @param ns 
+ * @param script Name of the script to use for the calculation
+ * @param server The server that will run the script
+ * @param homeRamAdjust Amount of RAM to hold back from "home"
+ * @returns integer
+ */
+export function getThreads(
+    ns: NS,
+    script: string,
+    server: string,
+    homeRamAdjust = 16, // Keep some RAM available on "home"
+): number {
     const scriptRam = ns.getScriptRam(script);
     let serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
 
     // Keep 8GB of RAM for home
     if (server == "home") {
-        serverAvailableRam -= 8;
+        serverAvailableRam -= homeRamAdjust
     }
 
     const threads = Math.floor(serverAvailableRam / scriptRam);
@@ -18,20 +31,13 @@ export function getThreads(ns: NS, script: string, server: string) {
     return threads;
 }
 
-export function getConnectedServers(ns: NS, server: string, ignore = "home") {
-    var servers: string[] = [];
-    var cur = ns.scan(server);
-    cur.forEach(new_server => {
-        if (new_server !== ignore && new_server !== server) {
-            ns.tprintf("found server: %s on %s", new_server, server);
-            servers.push(new_server);
-        }
-    });
-
-    return servers;
-}
-
-export function runApps(ns: NS, target: string) {
+/**
+ * 
+ * @param ns 
+ * @param target The target server to run the apps
+ * @returns integer: Numbe of apps ran
+ */
+export function runApps(ns: NS, target: string): number {
     if (target == "home") {
         return 99;
     }
@@ -65,6 +71,14 @@ export function runApps(ns: NS, target: string) {
     return portCount;
 }
 
+/**
+ * Runs all available apps and tries to run NUKE.exe.
+ * 
+ * @param ns 
+ * @param target The target server to open
+ * @param force  Ignore invalid state
+ * @returns 
+ */
 export function openServer(ns: NS, target: string, force: boolean = false) {
     if ((target === "home") || target.startsWith("pserv")) {
         return true;
@@ -74,7 +88,7 @@ export function openServer(ns: NS, target: string, force: boolean = false) {
     const portCount = runApps(ns, target);
     const requiredPorts = ns.getServerNumPortsRequired(target);
 
-    if (requiredPorts > portCount && !force) {
+    if ((requiredPorts > portCount) && !force) {
         ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, target, requiredPorts);
         return false;
     }
@@ -91,6 +105,19 @@ export function openServer(ns: NS, target: string, force: boolean = false) {
     return true;
 }
 
+/**
+ * 
+ * Execute a hack against a target
+ * 
+ * @param ns 
+ * @param target The target of the hack
+ * @param script The script used for hacking
+ * @param force  Ignore invalid state and try the hack anyway
+ * @param host The serve on which to run the script
+ * @param serverMoneyThresholdFactor # Factor to reduce a target's max money
+ * @param securityThreshAdjust # Adjust the targets security threshold
+ * @returns 
+ */
 export function execHack(
     ns: NS,
     target: string,
@@ -139,11 +166,15 @@ export function execHack(
     }
 }
 
-/** Helper to get a list of all hostnames on the network
- * @param {NS} ns The nestcript instance passed to your script's main entry point
- * @param {boolean} all True: return all servers found; False: only returned rooted servers w/ money
- * @returns {string[]} **/
-export function scanAllServers(ns: NS, all = true) {
+/** Helper to get a list of all hostnames on the network **/
+
+/**
+ * 
+ * @param ns 
+ * @param all false: Only included rooted servers with money 
+ * @returns string[] List of hostnames found
+ */
+export function scanAllServers(ns: NS, all = true): string[] {
     let returnHosts = [];
     let discoveredHosts = []; // Hosts (a.k.a. servers) we have scanned
     let hostsToScan = ["home"]; // Hosts we know about, but have no yet scanned
@@ -166,25 +197,27 @@ export function scanAllServers(ns: NS, all = true) {
     return returnHosts; // The list of scanned hosts should now be the set of all hosts in the game!
 }
 
-export function assertType(value: any, type: string) {
-    if (typeof value !== type) {
-        throw new Error("Value must be a " + type);
-    }
-}
-
-export async function main(ns: NS) {
-    getThreads(ns, "v1-hack.js", "home")
-}
-
-export function getServerAction(ns: NS, host: string) {
+/**
+ * 
+ * Gets the first action and args in the process list and returns it as a string.
+ * 
+ * @param ns 
+ * @param host 
+ * @returns string
+ */
+export function getServerAction(ns: NS, host: string): string {
     /*
     Gets the first action in the list and returns it.
     */
     var actions = ns.ps(host)
 
     if (actions.length == 0) {
-        return null
+        return ""
     }
 
     return ns.sprintf("%s %s", actions[0].filename, actions[0].args.join(" "))
+}
+
+export async function main(ns: NS) {
+    ns.tprint(getThreads(ns, "v1-hack.js", "home"))
 }
