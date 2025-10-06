@@ -148,6 +148,8 @@ export function execHack(
 
     if (!openServer(ns, target, force)) {
         return;
+    } else if (!openServer(ns, hostServer, force)) {
+        return;
     }
 
     const threads = getThreads(ns, script, hostServer)
