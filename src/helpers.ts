@@ -104,19 +104,21 @@ export function execHack(
         return
     }
 
-    const needLevel = ns.getServerRequiredHackingLevel(target);
-    if (needLevel > ns.getHackingLevel()) {
-        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, needLevel);
+    const hostServer = host === '' ? target : host
+
+    const myHackingLevel = ns.getHackingLevel()
+    const targetHackingLevel = ns.getServerRequiredHackingLevel(target)
+    const hostHackingLevel = ns.getServerRequiredHackingLevel(hostServer)
+    if (targetHackingLevel > myHackingLevel) {
+        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, targetHackingLevel);
+        return;
+    } else if (hostHackingLevel > myHackingLevel) {
+        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", hostServer, hostHackingLevel);
         return;
     }
 
     if (!openServer(ns, target, force)) {
         return;
-    }
-
-    const hostServer = host === '' ? target : host
-    if (!openServer(ns, hostServer, force)) {
-        return
     }
 
     const threads = getThreads(ns, script, hostServer)
