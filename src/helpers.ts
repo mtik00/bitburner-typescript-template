@@ -95,12 +95,13 @@ export function execHack(
     ns: NS,
     target: string,
     script: string,
-    script_host = "home",
     force = false,
     host = '',
+    serverMoneyThresholdFactor = 0.75,
+    securityThreshAdjust = 5,
 ) {
 
-    if (target === "home") {
+    if (target === "home" || target.startsWith("pserv")) {
         return
     }
 
@@ -109,6 +110,7 @@ export function execHack(
     const myHackingLevel = ns.getHackingLevel()
     const targetHackingLevel = ns.getServerRequiredHackingLevel(target)
     const hostHackingLevel = ns.getServerRequiredHackingLevel(hostServer)
+
     if (targetHackingLevel > myHackingLevel) {
         ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, targetHackingLevel);
         return;
@@ -128,8 +130,12 @@ export function execHack(
     } else {
         ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
         ns.scp(script, hostServer);
-        ns.exec(script, hostServer, threads, "--target", target);
-        ns.tprintf("executed %s on %s targeting %s with -t=%s", script, hostServer, target, threads);
+
+        const moneyThresh = ns.getServerMaxMoney(target) * serverMoneyThresholdFactor
+        const securityThresh = ns.getServerMinSecurityLevel(target) + securityThreshAdjust
+
+        ns.exec(script, hostServer, threads, "--target", target, "--moneyThresh", moneyThresh, "--securityThresh", securityThresh);
+        ns.tprintf("executed %s on %s with -t=%s", script, hostServer, threads);
     }
 }
 

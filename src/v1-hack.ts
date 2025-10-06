@@ -4,13 +4,12 @@ import { NS } from "@ns";
 export async function main(ns: NS) {
     const options = ns.flags([
         ['target', 'n00dles'],
-        ['maxMoneyFactor', 0.75],
-        ['minSecurityAdjust', 5],
+        ['moneyThresh', 0.0],
+        ['securityThresh', 0]
     ]);
     const target = options.target.toString()
-
-    const moneyThresh = ns.getServerMaxMoney(target) * parseFloat(options.maxMoneyFactor.toString())
-    const securityThresh = ns.getServerMinSecurityLevel(target) + parseInt(options.minSecurityAdjust.toString())
+    const moneyThresh = parseFloat(options.moneyThresh.toString())
+    const securityThresh = parseInt(options.securityThresh.toString())
 
     while (true) {
         if (ns.getServerSecurityLevel(target) > securityThresh) {
