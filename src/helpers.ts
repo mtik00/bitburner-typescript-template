@@ -220,6 +220,34 @@ export function getServerAction(ns: NS, host: string): string {
     return ns.sprintf("%s %s", actions[0].filename, actions[0].args.join(" "))
 }
 
+export function findPath(
+    ns: NS,
+    target: string,
+    serverName: string,
+    serverList: string[],
+    ignore: string[],
+    isFound: boolean,
+): [string[], boolean] {
+    ignore.push(serverName);
+    let scanResults = ns.scan(serverName);
+    for (let server of scanResults) {
+        if (ignore.includes(server)) {
+            continue;
+        }
+        if (server === target) {
+            serverList.push(server);
+            return [serverList, true];
+        }
+        serverList.push(server);
+        [serverList, isFound] = findPath(ns, target, server, serverList, ignore, isFound);
+        if (isFound) {
+            return [serverList, isFound];
+        }
+        serverList.pop();
+    }
+    return [serverList, false];
+}
+
 export async function main(ns: NS) {
     ns.tprint(getThreads(ns, "v1-hack.js", "home"))
 }
