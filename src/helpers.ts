@@ -220,6 +220,29 @@ export function getServerAction(ns: NS, host: string): string {
     return ns.sprintf("%s %s", actions[0].filename, actions[0].args.join(" "))
 }
 
+export function connectCommand(
+    ns: NS,
+    target: string,
+    startServer: string = "home",
+): string {
+    if (target === undefined) {
+        ns.alert('Please provide target server');
+        return '';
+    }
+    let [results, isFound] = findPath(ns, target.toString(), startServer, [], [], false);
+    let connectString = ''
+
+    if (!isFound) {
+        ns.alert('Server not found!');
+    } else {
+        for (const host in results) {
+            connectString += ns.sprintf("connect %s;", results[host])
+        }
+    }
+
+    return connectString
+}
+
 export function findPath(
     ns: NS,
     target: string,

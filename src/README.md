@@ -8,11 +8,11 @@
 
 1. Study computer science until Hacking level 10
 2. Root joesguns:  `./nuke.js --target joesguns`
-3. Start the scripts: `./startup.js`
+3. Start the scripts: `./startup.js --target joesguns`
 
 Periodically:
 
-- at least after each new program is created, use `run startup.js` to hack new targets.
+- at least after each new program is created, use `run startup.js --target joesguns` to hack new targets.
 - run `./purchaseServers.js`, until you've maxed them out.
 - run `./upgradeServer.js` to upgrade your puchased server(s) with more RAM
 
