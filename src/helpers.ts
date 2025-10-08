@@ -271,6 +271,22 @@ export function findPath(
     return [serverList, false];
 }
 
+export function findHackPID(ns: NS, hostServer: string, scriptMatch: RegExp = /.*hack.js/): number {
+    const processes = ns.ps(hostServer)
+    let hackPID = 0
+
+    for (let index = 0; index < processes.length; index++) {
+        const process = processes[index];
+        ns.tprint(process)
+        if (process.filename.match(scriptMatch)) {
+            hackPID = process.pid
+            break
+        }
+    }
+
+    return hackPID
+}
+
 export async function main(ns: NS) {
     ns.tprint(getThreads(ns, "v1-hack.js", "home"))
 }
