@@ -6,6 +6,7 @@ import { NS } from "@ns";
  * @param script Name of the script to use for the calculation
  * @param server The server that will run the script
  * @param homeRamAdjust Amount of RAM to hold back from "home"
+ * @param maxRam Check the maximum RAM, not available
  * @returns integer
  */
 export function getThreads(
@@ -13,9 +14,16 @@ export function getThreads(
     script: string,
     server: string,
     homeRamAdjust = 16, // Keep some RAM available on "home"
+    maxRam = false,
 ): number {
     const scriptRam = ns.getScriptRam(script);
-    let serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+    let serverAvailableRam
+
+    if (maxRam) {
+        serverAvailableRam = ns.getServerMaxRam(server)
+    } else {
+        serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server)
+    }
 
     // Keep 8GB of RAM for home
     if (server == "home") {
