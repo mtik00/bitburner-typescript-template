@@ -30,7 +30,7 @@ export async function main(ns: NS) {
 
     const currentRam = ns.getServerMaxRam(server)
     const ram = options.ram > 0 ? options.ram : currentRam * 2
-    const serverCost = ns.getPurchasedServerCost(ram)
+    const serverCost = ns.getPurchasedServerUpgradeCost(server, ram)
     const processes = ns.ps(server)
     let script = options.script
     let args: string[] = ["--target", options.target]
@@ -61,8 +61,8 @@ export async function main(ns: NS) {
     );
 
     ns.killall(server)  // Can't delete the server if scripts are running
-    ns.deleteServer(server)
-    ns.purchaseServer(server, ram)
+    ns.upgradePurchasedServer(server, ram)
+    ns.tprintf("Upgraded %s for $%s", server, ns.formatNumber(serverCost))
 
     let threads = getThreads(ns, script, server);
 
