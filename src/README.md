@@ -18,3 +18,8 @@ Periodically:
 
 - Head to Alpha Enterprises and purchase the TOR router
 - Use the `buy` command in your terminal (`buy -l`)
+
+# After everything hacked
+
+- Gain Hacking experience:  
+    ./focus.js --target joesguns --script hWeaken.js
