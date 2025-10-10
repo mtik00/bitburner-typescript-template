@@ -1,5 +1,17 @@
 import { NS } from "@ns";
 
 export async function main(ns: NS): Promise<void> {
-    ns.weaken(ns.args[0])
+    const options = ns.flags([
+        ['target', ''],
+        ['loop', false]
+    ]);
+
+    if (options.loop) {
+        while (options.loop) {
+            await ns.weaken(options.target)
+            ns.asleep(200)
+        }
+    } else {
+        await ns.weaken(options.target)
+    }
 }
