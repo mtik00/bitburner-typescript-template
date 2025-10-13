@@ -36,5 +36,6 @@ ${server}:
     Req ports    : ${ns.getServer(server).numOpenPortsRequired}
     Open ports   : ${ns.getServer(server).openPortCount}
     Req Hack Lvl : ${ns.getServerRequiredHackingLevel(server)}
+    Backdoor?    : ${ns.getServer(server).backdoorInstalled ? "YES" : "NO"}
 `);
 }
