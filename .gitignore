@@ -1,3 +1,6 @@
 node_modules/
 dist/
 NetscriptDefinitions.d.ts
+
+junk.ts
+junk.js

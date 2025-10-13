@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS, Server, ProcessInfo } from "@ns";
 
 /**
  * 
@@ -141,6 +141,10 @@ export function execHack(
     }
 
     const hostServer = host === '' ? target : host
+
+    if (ns.getServerMaxRam(hostServer) === 0) {
+        return
+    }
 
     const myHackingLevel = ns.getHackingLevel()
     const targetHackingLevel = ns.getServerRequiredHackingLevel(target)
@@ -297,4 +301,65 @@ export function findHackPID(ns: NS, hostServer: string, scriptMatch: RegExp = /.
 
 export async function main(ns: NS) {
     ns.tprint(getThreads(ns, "v1-hack.js", "home"))
+}
+
+export class SwarmServer {
+    ns: NS
+    server: Server
+    procs: ProcessInfo[]
+
+    constructor(ns: NS, server: any) {
+        this.ns = ns
+        this.server = server
+        this.procs = ns.ps(server.hostname)
+    }
+
+    public get hostname(): string {
+        return this.server.hostname
+    }
+
+    public get maxRam(): number {
+        return this.server.maxRam
+    }
+
+    public get availableRam(): number {
+        return this.server.maxRam - this.server.ramUsed
+    }
+
+    public get ports_required(): number {
+        return this.server.numOpenPortsRequired || 99
+    }
+
+    public get ports_open(): number {
+        return this.server.openPortCount || 0
+    }
+
+    nuke() {
+        runApps(this.ns, this.hostname)
+        this.server = this.ns.getServer(this.hostname)
+    }
+
+    getThreads(
+        script: string,
+        hostServer: string,
+        homeRamAdjust = 16, // Keep some RAM available on "home"
+        maxRam = false,
+    ): number {
+        return getThreads(this.ns, script, hostServer, homeRamAdjust, maxRam)
+    }
+}
+
+/**
+ * Returns a list of our swarm (servers of which we have root access.
+ * 
+ * @param ns NS
+ * @returns SwarmServer[]
+ */
+export function getSwarm(ns: NS): SwarmServer[] {
+    let servers: SwarmServer[] = []
+    for (const hostname of scanAllServers(ns)) {
+        servers.push(new SwarmServer(ns, hostname))
+    }
+
+    return servers
 }
