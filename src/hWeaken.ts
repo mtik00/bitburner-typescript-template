@@ -1,3 +1,4 @@
+// 1.75GM
 import { NS } from "@ns";
 
 export async function main(ns: NS): Promise<void> {
@@ -6,12 +7,14 @@ export async function main(ns: NS): Promise<void> {
         ['loop', false]
     ]);
 
+    const target = options.target.toString()
+
     if (options.loop) {
         while (options.loop) {
-            await ns.weaken(options.target)
+            await ns.weaken(target)
             ns.asleep(200)
         }
     } else {
-        await ns.weaken(options.target)
+        await ns.weaken(target)
     }
 }
