@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { execHack, scanAllServers } from './helpers.js'
+import { execHack, scanAllServers, openServer } from './helpers.js'
 
 export async function main(ns: NS): Promise<void> {
   const options = ns.flags([
@@ -12,6 +12,10 @@ export async function main(ns: NS): Promise<void> {
     ns.tprint("USAGE: ./startup.js --target <hostname>")
     return
   }
+
+  // Make sure the target is open before we start to hack it.
+  const target = options.target.toString()
+  openServer(ns, target)
 
   const servers = scanAllServers(ns);
   for (let i = 0; i < servers.length; ++i) {

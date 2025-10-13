@@ -7,19 +7,18 @@
 # New game steps
 
 1. Study computer science until Hacking level 10
-2. Root joesguns:  `./nuke.js --target joesguns`
-3. Start the scripts: `./startup.js --target joesguns`
+2. Start the scripts: `./startup.js --target joesguns`
 
 Periodically:
 
-- at least after each new program is created, use `run startup.js --target joesguns` to hack new targets.
+- at least after each new program is created, use `./startup.js --target joesguns` to hack new targets.
 - run `./purchaseServers.js`, until you've maxed them out.
-- run `./upgradeServer.js` to upgrade your puchased server(s) with more RAM
+- run `./upgradeServers.js` to upgrade your puchased server(s) with more RAM
 
 - Head to Alpha Enterprises and purchase the TOR router
 - Use the `buy` command in your terminal (`buy -l`)
 
 # After everything hacked
 
-- Gain Hacking experience:  
+- Gain quick Hacking experience:  
     ./focus.js --target joesguns --script hWeaken.js

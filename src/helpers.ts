@@ -134,6 +134,7 @@ export function execHack(
     host = '',
     serverMoneyThresholdFactor = 0.75,
     securityThreshAdjust = 5,
+    quiet = true,
 ) {
 
     if (target === "home" || target.startsWith("pserv")) {
@@ -167,7 +168,7 @@ export function execHack(
     const threads = getThreads(ns, script, hostServer)
 
     if (threads < 1) {
-        ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
+        !quiet && ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
     } else {
         ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
         ns.scp(script, hostServer);
