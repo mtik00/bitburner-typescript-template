@@ -17,6 +17,11 @@ export async function main(ns: NS) {
         ['startWith', 0]
     ]);
 
+    if (options.ram === undefined) {
+        ns.tprint("ERROR: missing --ram flag")
+        return
+    }
+
     const startWith = parseInt(options.startWith)
     const ram = parseInt(options.ram)
 
