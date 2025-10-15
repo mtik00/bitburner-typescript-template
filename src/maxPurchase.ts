@@ -49,7 +49,12 @@ export async function main(ns: NS): Promise<void> {
         ns.tprint("ERROR: Unable to upgrade servers")
     }
     else if (totalUpgradeCost < 0) {
-        ns.tprintf("ERROR: You don't have enough money ($%s) to upgrade your servers to %s", ns.formatNumber(upgradeCost(ns, ram * 2)), ns.formatRam(ram * 2, 0))
+        ns.tprintf(
+            "ERROR: You don't have enough money ($%s) to upgrade your servers from %s to %s",
+            ns.formatNumber(upgradeCost(ns, ram * 2)),
+            ns.formatRam(startingRam, 0),
+            ns.formatRam(ram * 2, 0)
+        )
     }
     else if (totalUpgradeCost > myMoney) {
         ns.tprintf("ERROR: You would need %s to upgrade all servers to %i (%s)", ns.formatNumber(totalUpgradeCost), ram, ns.formatRam(ram))
