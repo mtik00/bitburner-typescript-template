@@ -39,3 +39,7 @@ ${server}:
     Backdoor?    : ${ns.getServer(server).backdoorInstalled ? "YES" : "NO"}
 `);
 }
+
+export function autocomplete(data: any, args: any) {
+    return data.servers;
+}

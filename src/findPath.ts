@@ -8,3 +8,7 @@ export async function main(ns: NS) {
         connectCommand(ns, target, startServer)
     )
 }
+
+export function autocomplete(data: any, args: any) {
+    return data.servers;
+}
