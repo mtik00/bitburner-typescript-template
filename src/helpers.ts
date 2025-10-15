@@ -359,7 +359,7 @@ export class SwarmServer {
 export function getSwarm(ns: NS): SwarmServer[] {
     let servers: SwarmServer[] = []
     for (const hostname of scanAllServers(ns)) {
-        servers.push(new SwarmServer(ns, hostname))
+        servers.push(new SwarmServer(ns, ns.getServer(hostname)))
     }
 
     return servers

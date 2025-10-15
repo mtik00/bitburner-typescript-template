@@ -15,7 +15,6 @@ export async function main(ns: NS) {
         ['serverMoneyThresholdFactor', 0.75],
         ['securityThreshAdjust', 5],
         ['all', false],
-
     ]);
 
     const target = options.target.toString()
@@ -23,7 +22,7 @@ export async function main(ns: NS) {
     const all = options.all
 
     if (target === "") {
-        ns.tprint(`USAGE: ${ns.getScriptName()} --server <name>`);
+        ns.tprint(`USAGE: ${ns.getScriptName()} --target <name>`);
         return
     }
 
