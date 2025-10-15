@@ -16,7 +16,12 @@ export async function main(ns: NS): Promise<void> {
     const myMoney = ns.getServerMoneyAvailable("home")
 
     const maxRam = Math.pow(2, 20) // 1048576
-    const startingRam = ns.getServerMaxRam("pserv-001")
+    const purchasedServers = ns.getPurchasedServers()
+    let startingRam = 0
+
+    if (purchasedServers.length > 0) {
+        startingRam = ns.getServerMaxRam(purchasedServers[0])
+    }
 
     debug && ns.tprintf("Maximum RAM available: %s", ns.formatRam(maxRam))
 
