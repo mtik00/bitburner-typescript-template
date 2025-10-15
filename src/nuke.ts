@@ -29,3 +29,11 @@ export async function main(ns: NS) {
         ns.tprint("... backdoor NOT installed")
     }
 }
+
+export function autocomplete(data, args) {
+    data.flags(argsSchema);
+    const lastFlag = args.length > 1 ? args[args.length - 2] : null;
+    if (["--target"].includes(lastFlag))
+        return data.servers;
+    return [];
+}

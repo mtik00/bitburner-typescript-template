@@ -22,3 +22,15 @@ export async function main(ns: NS): Promise<void> {
     execHack(ns, options.target, options.script, false, servers[i]);
   }
 }
+
+export function autocomplete(data, args) {
+  data.flags([
+    ['target', ''],
+    ['script', 'v1-hack.js'],
+  ]);
+
+  const lastFlag = args.length > 1 ? args[args.length - 2] : null;
+  if (["--target"].includes(lastFlag))
+    return data.servers;
+  return [];
+}
