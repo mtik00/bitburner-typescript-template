@@ -16,6 +16,7 @@ export async function main(ns: NS): Promise<void> {
     const myMoney = ns.getServerMoneyAvailable("home")
 
     const maxRam = Math.pow(2, 20) // 1048576
+    const startingRam = ns.getServerMaxRam("pserv-001")
 
     debug && ns.tprintf("Maximum RAM available: %s", ns.formatRam(maxRam))
 
@@ -48,6 +49,6 @@ export async function main(ns: NS): Promise<void> {
     else if (totalUpgradeCost > myMoney) {
         ns.tprintf("ERROR: You would need %s to upgrade all servers to %i (%s)", ns.formatNumber(totalUpgradeCost), ram, ns.formatRam(ram))
     } else {
-        ns.tprintf("can upgrade/purchase all servers with: %s (%i) for %s", ns.formatRam(ram), ram, ns.formatNumber(totalUpgradeCost))
+        ns.tprintf("can upgrade/purchase all servers from %s to: %s (%i) for %s", ns.formatRam(startingRam, 0), ns.formatRam(ram), ram, ns.formatNumber(totalUpgradeCost))
     }
 }
