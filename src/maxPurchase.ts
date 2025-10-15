@@ -57,8 +57,19 @@ export async function main(ns: NS): Promise<void> {
         )
     }
     else if (totalUpgradeCost > myMoney) {
-        ns.tprintf("ERROR: You would need %s to upgrade all servers to %i (%s)", ns.formatNumber(totalUpgradeCost), ram, ns.formatRam(ram))
+        ns.tprintf(
+            "ERROR: You would need %s to upgrade all servers from %s to %s",
+            ns.formatNumber(totalUpgradeCost),
+            ns.formatRam(startingRam, 0),
+            ns.formatRam(ram, 0)
+        )
     } else {
-        ns.tprintf("can upgrade/purchase all servers from %s to: %s (%i) for %s", ns.formatRam(startingRam, 0), ns.formatRam(ram), ram, ns.formatNumber(totalUpgradeCost))
+        ns.tprintf(
+            "You can upgrade/purchase all servers from %s to: %s (%i) for %s",
+            ns.formatRam(startingRam, 0),
+            ns.formatRam(ram, 0),
+            ram,
+            ns.formatNumber(totalUpgradeCost)
+        )
     }
 }

@@ -342,11 +342,10 @@ export class SwarmServer {
 
     getThreads(
         script: string,
-        hostServer: string,
         homeRamAdjust = 16, // Keep some RAM available on "home"
         maxRam = false,
     ): number {
-        return getThreads(this.ns, script, hostServer, homeRamAdjust, maxRam)
+        return getThreads(this.ns, script, this.hostname, homeRamAdjust, maxRam)
     }
 }
 
