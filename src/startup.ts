@@ -16,6 +16,8 @@ export async function main(ns: NS): Promise<void> {
   // Make sure the target is open before we start to hack it.
   const target = options.target.toString()
   openServer(ns, target)
+  ns.nuke(target)
+
 
   const servers = scanAllServers(ns);
   for (let i = 0; i < servers.length; ++i) {
