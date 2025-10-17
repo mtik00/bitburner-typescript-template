@@ -59,3 +59,12 @@ export async function main(ns: NS) {
         ns.exec(script, server, threads, ...args);
     }
 }
+
+export function autocomplete(data: any, args: any) {
+
+    const lastFlag = args.length > 1 ? args[args.length - 2] : null
+    if (["--ram"].includes(lastFlag))
+        return [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576];
+
+    return []
+}
