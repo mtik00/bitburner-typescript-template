@@ -403,8 +403,18 @@ export class SwarmServer {
  * @param ns NS
  * @returns SwarmServer[]
  */
-export function getSwarm(ns: NS): SwarmServer[] {
+export function getSwarm(ns: NS, home = false, purchased = false): SwarmServer[] {
     let servers: SwarmServer[] = []
+    if (home) {
+        servers.push(new SwarmServer(ns, ns.getServer("home")))
+    }
+
+    if (purchased) {
+        for (const hostname of ns.getPurchasedServers()) {
+            servers.push(new SwarmServer(ns, ns.getServer(hostname)))
+        }
+    }
+
     for (const hostname of scanAllServers(ns, false)) {
         servers.push(new SwarmServer(ns, ns.getServer(hostname)))
     }
