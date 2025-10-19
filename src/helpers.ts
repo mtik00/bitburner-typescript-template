@@ -181,6 +181,42 @@ export function execHack(
     }
 }
 
+/**
+ * Take a list of hostnames and sort them by the input key.
+ * 
+ * @param ns NS
+ * @param key The key of the `Server` to sort by
+ * @param hostnames A list of server hostname
+ * @param order asc/desc
+ * @returns string[] : The list of hostnames sorted by the inputs
+ */
+export function sortServers(ns: NS, key: keyof Server, hostnames: string[], order: 'asc' | 'desc' = 'asc'): string[] {
+
+    let servers: Server[] = []
+    let result: string[] = []
+
+    for (const hostname of hostnames) {
+        servers.push(ns.getServer(hostname))
+    }
+
+    const sortedServers = [...servers].sort((a, b) => {
+        const aValue = a[key];
+        const bValue = b[key];
+
+        // Handle null/undefined values
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return order === 'asc' ? 1 : -1;
+        if (bValue == null) return order === 'asc' ? -1 : 1;
+
+        // Compare values
+        if (aValue < bValue) return order === 'asc' ? -1 : 1;
+        if (aValue > bValue) return order === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    return sortedServers.map(server => server.hostname);
+}
+
 /** Helper to get a list of all hostnames on the network **/
 
 /**

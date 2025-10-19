@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { execHack, scanAllServers, openServer } from './helpers.js'
+import { execHack, scanAllServers, openServer, sortServers } from './helpers.js'
 
 export async function main(ns: NS): Promise<void> {
   const options = ns.flags([
@@ -18,10 +18,9 @@ export async function main(ns: NS): Promise<void> {
   openServer(ns, target)
   ns.nuke(target)
 
-
-  const servers = scanAllServers(ns);
+  const servers = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
   for (let i = 0; i < servers.length; ++i) {
-    execHack(ns, options.target, options.script, false, servers[i]);
+    execHack(ns, options.target, options.script, false, servers[i], undefined, undefined, true);
   }
 }
 
