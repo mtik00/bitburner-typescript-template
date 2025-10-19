@@ -51,3 +51,7 @@ export async function main(ns: NS) {
         ns.tprintf("executed %s on %s, targeting %s, with -t=%s", script, hostServer, target, threads);
     }
 }
+
+export function autocomplete(data: any, args: any) {
+    return data.servers;
+}
