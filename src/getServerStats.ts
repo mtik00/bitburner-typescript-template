@@ -1,14 +1,7 @@
 // @ts-nocheck
 import { NS, ScriptArg } from '@ns'
-import { scanAllServers } from './helpers.js'
+import { scanAllServers, getArgValue } from './helpers.js'
 
-function getTargetArg(args: ScriptArg[]): ScriptArg | string {
-    const targetIndex = args.indexOf('--target');
-    if (targetIndex !== -1 && targetIndex < args.length - 1) {
-        return args[targetIndex + 1].toString()
-    }
-    return "??"
-}
 
 function get_action(ns: NS, host: string) {
     /*
@@ -19,8 +12,8 @@ function get_action(ns: NS, host: string) {
         return null
     }
     const filename = actions[0].filename.replace("scripts/", "").replace(".js", "")
-    const target = getTargetArg(actions[0].args)
-    return `${filename}(${target})`
+    const target = getArgValue(actions[0].args, "--target")
+    return `${filename}(${target === undefined ? '??' : target})`
 }
 
 function pad_str(str: string, len: number) {
@@ -46,7 +39,7 @@ function get_server_data(ns: NS, hostname: string) {
         ` money:${pad_str(parseInt(moneyAvailable), 12)}/${pad_str(parseInt(moneyMax), 12)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})` +
         ` security:${pad_str(securityLvl.toFixed(2), 6)}(${pad_str(securityMin, 2)})` +
         ` RAM:${pad_str(parseInt(ram), 4)}` +
-        ` Action:${pad_str(get_action(ns, hostname), 20)}`
+        ` Action: ${get_action(ns, hostname)}`
 }
 
 export async function main(ns: NS) {

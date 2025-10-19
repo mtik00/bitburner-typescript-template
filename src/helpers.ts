@@ -1,4 +1,4 @@
-import { NS, Server, ProcessInfo } from "@ns";
+import { NS, Server, ProcessInfo, ScriptArg } from "@ns";
 
 /**
  * 
@@ -193,7 +193,6 @@ export function execHack(
 export function sortServers(ns: NS, key: keyof Server, hostnames: string[], order: 'asc' | 'desc' = 'asc'): string[] {
 
     let servers: Server[] = []
-    let result: string[] = []
 
     for (const hostname of hostnames) {
         servers.push(ns.getServer(hostname))
@@ -383,6 +382,19 @@ export class SwarmServer {
     ): number {
         return getThreads(this.ns, script, this.hostname, homeRamAdjust, maxRam)
     }
+
+    public get target(): string {
+        if (this.procs.length === 0) {
+            return ""
+        }
+
+        const t = getArgValue(this.procs[0].args, "--target")
+        if (t === undefined) {
+            return "?"
+        }
+
+        return t.toString()
+    }
 }
 
 /**
@@ -393,9 +405,36 @@ export class SwarmServer {
  */
 export function getSwarm(ns: NS): SwarmServer[] {
     let servers: SwarmServer[] = []
-    for (const hostname of scanAllServers(ns)) {
+    for (const hostname of scanAllServers(ns, false)) {
         servers.push(new SwarmServer(ns, ns.getServer(hostname)))
     }
 
-    return servers
+    return servers.sort((a, b) => (a.server.hackDifficulty || 0) - (b.server.hackDifficulty || 0))
+}
+
+/**
+ * 
+ * @param args List of process args
+ * @param flag Flag to search for
+ * @returns 
+ */
+export function getArgValue(args: ScriptArg[], flag: string): ScriptArg | undefined {
+    const flagIndex = args.indexOf(flag);
+    if (flagIndex !== -1 && flagIndex < args.length - 1) {
+        return args[flagIndex + 1];
+    }
+    return undefined;
+}
+
+export function getProcessInfo(ns: NS, host: string): ProcessInfo {
+    /*
+    Gets the first action in the list and returns it.
+    */
+    var actions = ns.ps(host)
+    if (actions.length == 0) {
+        return null
+    }
+    const filename = actions[0].filename.replace("scripts/", "").replace(".js", "")
+    const target = getArgValue(actions[0].args, "--target")
+    return `${filename}(${target === undefined ? '??' : target})`
 }
