@@ -7,11 +7,13 @@ export async function main(ns: NS) {
         ['command', 'focusWeaken'],
         ['target', 'joesguns'],
         ['select', 'all'],
+        ['quiet', true],
     ]);
 
     const command = options.command.toString()
     const target = options.target.toString()
     const select = options.select.toString()
+    const quiet = options.quiet.toString() === 'true'
 
     let home = false
     let purchased = false
@@ -47,8 +49,15 @@ export async function main(ns: NS) {
         ns.tprint("ERROR: Unknown command:", command)
     }
 
-    for (const server of getSwarm(ns, home, purchased)) {
-        // ns.tprint(server.server)
+    for (const server of getSwarm(ns)) {
+        if (!home && server.hostname === "home") {
+            !quiet && ns.tprint("...ignoring home")
+            continue
+        } else if (!purchased && server.hostname.startsWith("pserv")) {
+            !quiet && ns.tprint("...ignoring", server.hostname)
+            continue
+        }
+
         const hostServer = server.hostname
         const threads = server.getThreads(script)
 

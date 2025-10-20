@@ -237,9 +237,10 @@ export function scanAllServers(ns: NS, all = true): string[] {
         }
 
         discoveredHosts.push(hostName); // Mark this host as "scanned"
-        if (all || (ns.hasRootAccess(hostName) && (ns.getServerMaxMoney(hostName) > 0))) {
+        if (all || ns.hasRootAccess(hostName)) {
             returnHosts.push(hostName);
         }
+
         for (const connectedHost of ns.scan(hostName)) // "scan" (list all hosts connected to this one)
             if (!discoveredHosts.includes(connectedHost) && !hostsToScan.includes(connectedHost)) // If we haven't found this host
                 hostsToScan.push(connectedHost); // Add it to the queue of hosts to be scanned
@@ -395,6 +396,19 @@ export class SwarmServer {
 
         return t.toString()
     }
+
+    public get hack(): string {
+        if (this.procs.length === 0) {
+            return ""
+        }
+
+        for (const proc of this.procs) {
+            if (proc.filename.includes("h")) {
+                return proc.filename
+            }
+        }
+        return "?"
+    }
 }
 
 /**
@@ -403,21 +417,12 @@ export class SwarmServer {
  * @param ns NS
  * @returns SwarmServer[]
  */
-export function getSwarm(ns: NS, home = false, purchased = false): SwarmServer[] {
+export function getSwarm(ns: NS): SwarmServer[] {
     let servers: SwarmServer[] = []
-    if (home) {
-        servers.push(new SwarmServer(ns, ns.getServer("home")))
-    }
 
-    if (purchased) {
-        for (const hostname of ns.getPurchasedServers()) {
-            servers.push(new SwarmServer(ns, ns.getServer(hostname)))
-        }
-    }
-
-    for (const hostname of scanAllServers(ns, false)) {
+    scanAllServers(ns, false).forEach((hostname) => {
         servers.push(new SwarmServer(ns, ns.getServer(hostname)))
-    }
+    })
 
     return servers.sort((a, b) => (a.server.hackDifficulty || 0) - (b.server.hackDifficulty || 0))
 }

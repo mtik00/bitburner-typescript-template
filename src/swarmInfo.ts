@@ -56,14 +56,11 @@ function printTable<T extends Record<string, any>>(
 }
 
 export async function main(ns: NS) {
-    let servers: SwarmServer[] = [new SwarmServer(ns, ns.getServer("home"))]
-    for (const hostname of ns.getPurchasedServers()) {
-        servers.push(new SwarmServer(ns, ns.getServer(hostname)))
-    }
-    servers.push(...getSwarm(ns))
+    const servers = getSwarm(ns)
 
     printTable(ns, servers, [
         { key: 'hostname', header: 'Host' },
         { key: 'target', header: 'Target' },
+        { key: 'hack', header: 'Script' },
     ]);
 }
