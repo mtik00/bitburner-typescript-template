@@ -441,13 +441,13 @@ export function getArgValue(args: ScriptArg[], flag: string): ScriptArg | undefi
     return undefined;
 }
 
-export function getProcessInfo(ns: NS, host: string): ProcessInfo {
+export function getProcessInfo(ns: NS, host: string): string {
     /*
     Gets the first action in the list and returns it.
     */
     var actions = ns.ps(host)
     if (actions.length == 0) {
-        return null
+        return ""
     }
     const filename = actions[0].filename.replace("scripts/", "").replace(".js", "")
     const target = getArgValue(actions[0].args, "--target")
