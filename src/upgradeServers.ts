@@ -39,6 +39,7 @@ export async function main(ns: NS) {
         if (processes.length > 0) {
             script = processes[0].filename
             args = processes[0].args
+            ns.tprintf("WARN: input target %s ignored", options.target)
         }
 
         ns.tprintf(
@@ -65,6 +66,8 @@ export function autocomplete(data: any, args: any) {
     const lastFlag = args.length > 1 ? args[args.length - 2] : null
     if (["--ram"].includes(lastFlag))
         return [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576];
+    else if (["--target"].includes(lastFlag))
+        return data.servers
 
     return []
 }
