@@ -25,51 +25,36 @@ export async function main(ns: NS): Promise<void> {
 
     debug && ns.tprintf("Maximum RAM available: %s", ns.formatRam(maxRam))
 
-    var ram = 8
-    var totalUpgradeCost = upgradeCost(ns, ram)
+    var ram = 2
 
     let index = 0
-    while (ram <= maxRam && index < 30) {
-        index += 1
-        debug && ns.tprintf("step: %i; cost: %s; ram: %s", index, totalUpgradeCost, ns.formatRam(ram))
 
-        if (totalUpgradeCost > myMoney) {
-            ram /= 2
-            totalUpgradeCost = upgradeCost(ns, ram)
+    while (ram < maxRam) {
+        ram *= 2
+        index += 1
+        if (index > 30) {
             break
         }
 
-        ram *= 2
-        totalUpgradeCost = upgradeCost(ns, ram)
-    }
-
-    debug && ns.tprintf("after loop: step: %i, cost: %s; ram: %s", index, ns.formatNumber(totalUpgradeCost), ns.formatRam(ram))
-
-    if (!isFinite(totalUpgradeCost)) {
-        ns.tprint("ERROR: Unable to upgrade servers")
-    }
-    else if (totalUpgradeCost < 0) {
-        ns.tprintf(
-            "ERROR: You don't have enough money ($%s) to upgrade your servers from %s to %s",
-            ns.formatNumber(upgradeCost(ns, ram * 2)),
-            ns.formatRam(startingRam, 0),
-            ns.formatRam(ram * 2, 0)
-        )
-    }
-    else if (totalUpgradeCost > myMoney) {
-        ns.tprintf(
-            "ERROR: You would need %s to upgrade all servers from %s to %s",
-            ns.formatNumber(totalUpgradeCost),
-            ns.formatRam(startingRam, 0),
-            ns.formatRam(ram, 0)
-        )
-    } else {
-        ns.tprintf(
-            "You can upgrade/purchase all servers from %s to: %s (%i) for %s",
-            ns.formatRam(startingRam, 0),
-            ns.formatRam(ram, 0),
-            ram,
-            ns.formatNumber(totalUpgradeCost)
-        )
+        var totalUpgradeCost = upgradeCost(ns, ram)
+        if (totalUpgradeCost < 0) {
+            continue
+        } else if (totalUpgradeCost <= myMoney) {
+            ns.tprintf(
+                "You can upgrade/purchase all servers from %s to: %s (%i) for %s",
+                ns.formatRam(startingRam, 0),
+                ns.formatRam(ram, 0),
+                ram,
+                ns.formatNumber(totalUpgradeCost)
+            )
+        } else if (totalUpgradeCost > myMoney) {
+            ns.tprintf(
+                "WARN: You cannot upgrade/purchase all servers from %s to: %s (%i) for %s",
+                ns.formatRam(startingRam, 0),
+                ns.formatRam(ram, 0),
+                ram,
+                ns.formatNumber(totalUpgradeCost)
+            )
+        }
     }
 }
