@@ -48,15 +48,17 @@ export async function main(ns: NS) {
 
     // For each server in servers, get the server data and add to our Hash Table.
     for (var server of servers) {
-        stats[parseInt(ns.getServerMaxMoney(server))] = get_server_data(ns, server)
+        stats[server] = get_server_data(ns, server)
     }
 
     // Sort each server based on how much money it holds.
     var keys = Object.keys(stats)
-    keys.sort((a, b) => a - b)
+    keys.sort((a, b) => ns.getServerMaxMoney(a) - ns.getServerMaxMoney(b))
 
     for (var i in keys) {
         var key = keys[i]
+        if (key == "home" || key.startsWith("pserv") || ns.getServerMaxMoney(key) === 0)
+            continue
         ns.tprint(stats[key])
     }
 }
