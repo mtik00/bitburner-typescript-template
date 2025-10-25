@@ -1,5 +1,7 @@
 import { NS, Server, ProcessInfo, ScriptArg } from "@ns";
 
+export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
+
 /**
  * 
  * @param ns 
@@ -452,4 +454,22 @@ export function getProcessInfo(ns: NS, host: string): string {
     const filename = actions[0].filename.replace("scripts/", "").replace(".js", "")
     const target = getArgValue(actions[0].args, "--target")
     return `${filename}(${target === undefined ? '??' : target})`
+}
+
+export function createFlagAutocomplete(flagConfig: Record<string, any>) {
+    return function (data: any, args: any) {
+        const lastArg = args[args.length - 1];
+        const previousArg = args.length > 1 ? args[args.length - 2] : null;
+
+        // Check each flag in the config
+        for (const [flag, values] of Object.entries(flagConfig)) {
+            if (lastArg === flag || previousArg === flag) {
+                // If values is a function, call it with data
+                return typeof values === 'function' ? values(data) : values;
+            }
+        }
+
+        // Return list of available flags
+        return Object.keys(flagConfig);
+    };
 }

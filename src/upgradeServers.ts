@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS, Server } from "@ns";
-import { getThreads } from './helpers.js'
+import { getThreads, createFlagAutocomplete, RAM } from './helpers.js'
 
 /*
 This script used to replace a purchased server with a server with more RAM.
@@ -62,12 +62,10 @@ export async function main(ns: NS) {
 }
 
 export function autocomplete(data: any, args: any) {
-
-    const lastFlag = args.length > 1 ? args[args.length - 2] : null
-    if (["--ram"].includes(lastFlag))
-        return [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576];
-    else if (["--target"].includes(lastFlag))
-        return data.servers
-
-    return []
+    return createFlagAutocomplete({
+        "--ram": RAM,
+        "--target": (data: any) => data.servers,
+        "--script": (data: any) => data.scripts,
+        "--startsWith": Array.from({ length: 25 }, (_, i) => i.toString())
+    })(data, args);
 }
