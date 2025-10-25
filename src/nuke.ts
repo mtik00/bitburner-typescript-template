@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { openServer } from "./helpers";
+import { openServer, filterHackableServers } from "./helpers";
 
 const argsSchema = [
     ['target', ''],
@@ -14,7 +14,7 @@ export async function main(ns: NS) {
     if ((target.length === 0) && (options._.length > 0)) {
         target = options._[0]
     } else if (target.length === 0) {
-        ns.tprint("USAGE: nuke --target <target>");
+        ns.tprint("USAGE: nuke <target>");
         return
     }
 
@@ -31,9 +31,5 @@ export async function main(ns: NS) {
 }
 
 export function autocomplete(data, args) {
-    data.flags(argsSchema);
-    const lastFlag = args.length > 1 ? args[args.length - 2] : null;
-    if (["--target"].includes(lastFlag))
-        return data.servers;
-    return [];
+    return filterHackableServers(data);
 }

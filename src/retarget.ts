@@ -6,7 +6,7 @@
  * all servers know about, include home.
  */
 import { NS } from "@ns";
-import { getThreads, findHackPID, scanAllServers } from './helpers.js'
+import { getThreads, findHackPID, scanAllServers, createFlagAutocomplete, filterHackableServers } from './helpers.js'
 
 export async function main(ns: NS) {
     const options = ns.flags([
@@ -53,5 +53,8 @@ export async function main(ns: NS) {
 }
 
 export function autocomplete(data: any, args: any) {
-    return data.servers;
+    return createFlagAutocomplete({
+        "--target": (data: any) => filterHackableServers(data),
+        "--script": (data: any) => data.scripts,
+    })(data, args);
 }

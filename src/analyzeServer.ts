@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { filterHackableServers } from "helpers"
 
 export async function main(ns: NS) {
     const args = ns.flags([["help", false]]);
@@ -41,5 +42,5 @@ ${server}:
 }
 
 export function autocomplete(data: any, args: any) {
-    return data.servers;
+    return filterHackableServers(data);
 }

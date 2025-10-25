@@ -473,3 +473,7 @@ export function createFlagAutocomplete(flagConfig: Record<string, any>) {
         return Object.keys(flagConfig);
     };
 }
+
+export function filterHackableServers(data: any): string[] {
+    return data.servers.filter((s: string) => s !== "home" && !s.startsWith("pserv"));
+}

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS, Server } from "@ns";
-import { getThreads, createFlagAutocomplete, RAM } from './helpers.js'
+import { getThreads, createFlagAutocomplete, RAM, filterHackableServers } from './helpers.js'
 
 /*
 This script used to replace a purchased server with a server with more RAM.
@@ -64,7 +64,7 @@ export async function main(ns: NS) {
 export function autocomplete(data: any, args: any) {
     return createFlagAutocomplete({
         "--ram": RAM,
-        "--target": (data: any) => data.servers,
+        "--target": (data: any) => filterHackableServers(data),
         "--script": (data: any) => data.scripts,
         "--startsWith": Array.from({ length: 25 }, (_, i) => i.toString())
     })(data, args);

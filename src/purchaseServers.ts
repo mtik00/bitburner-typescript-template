@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { execHack, getThreads } from './helpers.js'
+import { execHack, filterHackableServers, createFlagAutocomplete, RAM } from './helpers.js'
 
 export async function main(ns: NS) {
     const options = ns.flags([
@@ -51,17 +51,10 @@ export async function main(ns: NS) {
     }
 }
 
-export function autocomplete(data, args) {
-    data.flags([
-        ['script', 'v1-hack.js'],
-        ['ram', 128],
-        ['target', ''],
-    ]);
-
-    const lastFlag = args.length > 1 ? args[args.length - 2] : null;
-    if (["--target"].includes(lastFlag)) {
-        return data.servers;
-    } else if (["--ram"].includes(lastFlag))
-        return [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576];
-    return [];
+export function autocomplete(data: any, args: any) {
+    return createFlagAutocomplete({
+        "--ram": RAM,
+        "--target": (data: any) => filterHackableServers(data),
+        "--script": (data: any) => data.scripts,
+    })(data, args);
 }
