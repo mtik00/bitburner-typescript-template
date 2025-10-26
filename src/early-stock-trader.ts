@@ -1,6 +1,6 @@
 // https://github.com/kamukrass/Bitburner/blob/develop/early-stock-trader.js
 import { NS } from "@ns";
-import { getServerFromStockSymbol } from 'helpers'
+import { getServerFromStockSymbol } from "./helpersScriptInterface"
 
 // does not require 4s Market Data, only TIX API Access
 

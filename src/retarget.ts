@@ -5,8 +5,8 @@
  * all servers know about, include home.
  */
 import { NS } from "@ns";
-import { getThreads, findHackPID, scanAllServers, filterHackableServers } from './helpers.js'
-import { createFlagAutocomplete } from "./helpersScriptInterface.js";
+import { getThreads, findHackPID, scanAllServers } from './helpers.js'
+import { createFlagAutocomplete, filterHackableServers } from "./helpersScriptInterface.js";
 
 interface FlagsSchema {
     script: string

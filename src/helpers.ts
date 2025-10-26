@@ -1,7 +1,5 @@
-import { NS, Server, ProcessInfo, ScriptArg } from "@ns";
-
-export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
-export const HOME_RAM_KEEP = 32
+import { NS, Server, ProcessInfo } from "@ns";
+import { getArgValue, HOME_RAM_KEEP } from "./helpersScriptInterface";
 
 /**
  * 
@@ -432,20 +430,6 @@ export function getSwarm(ns: NS): SwarmServer[] {
     return servers.sort((a, b) => (a.server.hackDifficulty || 0) - (b.server.hackDifficulty || 0))
 }
 
-/**
- * 
- * @param args List of process args
- * @param flag Flag to search for
- * @returns 
- */
-export function getArgValue(args: ScriptArg[], flag: string): ScriptArg | undefined {
-    const flagIndex = args.indexOf(flag);
-    if (flagIndex !== -1 && flagIndex < args.length - 1) {
-        return args[flagIndex + 1];
-    }
-    return undefined;
-}
-
 export function getProcessInfo(ns: NS, host: string): string {
     /*
     Gets the first action in the list and returns it.
@@ -457,48 +441,4 @@ export function getProcessInfo(ns: NS, host: string): string {
     const filename = actions[0].filename.replace("scripts/", "").replace(".js", "")
     const target = getArgValue(actions[0].args, "--target")
     return `${filename}(${target === undefined ? '??' : target})`
-}
-
-export function filterHackableServers(data: any): string[] {
-    return data.servers.filter((s: string) => s !== "home" && !s.startsWith("pserv"));
-}
-
-export function getServerFromStockSymbol(symbol: string): string {
-    const symServer: Record<string, string> = {
-        "WDS": "",
-        "ECP": "ecorp",
-        "MGCP": "megacorp",
-        "BLD": "blade",
-        "CLRK": "clarkinc",
-        "OMTK": "omnitek",
-        "FSIG": "4sigma",
-        "KGI": "kuai-gong",
-        "DCOMM": "defcomm",
-        "VITA": "vitalife",
-        "ICRS": "icarus",
-        "UNV": "univ-energy",
-        "AERO": "aerocorp",
-        "SLRS": "solaris",
-        "GPH": "global-pharm",
-        "NVMD": "nova-med",
-        "LXO": "lexo-corp",
-        "RHOC": "rho-construction",
-        "APHE": "alpha-ent",
-        "SYSC": "syscore",
-        "CTK": "comptek",
-        "NTLK": "netlink",
-        "OMGA": "omega-net",
-        "JGN": "joesguns",
-        "SGC": "sigma-cosmetics",
-        "CTYS": "catalyst",
-        "MDYN": "microdyne",
-        "TITN": "titan-labs",
-        "FLCM": "fulcrumtech",
-        "STM": "stormtech",
-        "HLS": "helios",
-        "OMN": "omnia",
-        "FNS": "foodnstuff"
-    }
-
-    return symServer[symbol];
 }

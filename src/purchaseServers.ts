@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { execHack, filterHackableServers, RAM } from './helpers.js'
-import { createFlagAutocomplete } from "./helpersScriptInterface.js";
+import { execHack } from './helpers.js'
+import { createFlagAutocomplete, filterHackableServers, RAM } from "./helpersScriptInterface.js";
 
 export async function main(ns: NS) {
     const options = ns.flags([

@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { filterHackableServers } from "helpers"
+import { filterHackableServers } from "./helpersScriptInterface"
 
 export async function main(ns: NS) {
     const args = ns.flags([["help", false]]);

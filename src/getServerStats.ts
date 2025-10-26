@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { NS, ScriptArg } from '@ns'
-import { scanAllServers, getArgValue } from './helpers.js'
+import { NS } from '@ns'
+import { scanAllServers } from './helpers.js'
+import { getArgValue } from './helpersScriptInterface.js'
 
 
 function get_action(ns: NS, host: string) {
