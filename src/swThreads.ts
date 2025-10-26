@@ -13,7 +13,7 @@ export async function main(ns: NS) {
 
     let threadCount = 0
     for (const server of getSwarm(ns)) {
-        threadCount += server.getThreads(options.script, 16, true)
+        threadCount += server.getThreads(options.script.toString(), undefined, true)
     }
 
     ns.tprintf("Total number of threads for %s: %i", options.script, threadCount)

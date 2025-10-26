@@ -5,7 +5,7 @@ import { getThreads } from "./helpers";
 const argsSchema = [
     ['script', 'v1-hack.js'],
     ['target', 'home'],
-    ['homeRamAdjust', 16],
+    ['homeRamAdjust', 32],
     ['maxRam', false],
 ];
 

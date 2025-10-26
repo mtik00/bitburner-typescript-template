@@ -1,6 +1,7 @@
 import { NS, Server, ProcessInfo, ScriptArg } from "@ns";
 
 export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
+export const HOME_RAM_KEEP = 32
 
 /**
  * 
@@ -15,7 +16,7 @@ export function getThreads(
     ns: NS,
     script: string,
     server: string,
-    homeRamAdjust = 16, // Keep some RAM available on "home"
+    homeRamAdjust = HOME_RAM_KEEP, // Keep some RAM available on "home"
     maxRam = false,
 ): number {
     const scriptRam = ns.getScriptRam(script);
@@ -380,7 +381,7 @@ export class SwarmServer {
 
     getThreads(
         script: string,
-        homeRamAdjust = 16, // Keep some RAM available on "home"
+        homeRamAdjust = HOME_RAM_KEEP, // Keep some RAM available on "home"
         maxRam = false,
     ): number {
         return getThreads(this.ns, script, this.hostname, homeRamAdjust, maxRam)

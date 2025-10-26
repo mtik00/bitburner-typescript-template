@@ -16,7 +16,7 @@ export async function main(ns: NS): Promise<void> {
   const servers = scanAllServers(ns);
   for (let i = 0; i < servers.length; ++i) {
     const hostServer = servers[i]
-    const threads = getThreads(ns, options.script, hostServer, true)
+    const threads = getThreads(ns, options.script, hostServer, undefined, true)
     if (threads < 1) {
       continue
     }
