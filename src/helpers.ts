@@ -423,7 +423,9 @@ export function getSwarm(ns: NS): SwarmServer[] {
     let servers: SwarmServer[] = []
 
     scanAllServers(ns, false).forEach((hostname) => {
-        servers.push(new SwarmServer(ns, ns.getServer(hostname)))
+        // There's no need to list servers with 0 RAM in our "swarm"
+        if (ns.getServerMaxRam(hostname) > 0)
+            servers.push(new SwarmServer(ns, ns.getServer(hostname)))
     })
 
     return servers.sort((a, b) => (a.server.hackDifficulty || 0) - (b.server.hackDifficulty || 0))
