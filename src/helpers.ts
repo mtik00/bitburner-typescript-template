@@ -477,3 +477,43 @@ export function createFlagAutocomplete(flagConfig: Record<string, any>) {
 export function filterHackableServers(data: any): string[] {
     return data.servers.filter((s: string) => s !== "home" && !s.startsWith("pserv"));
 }
+
+export function getServerFromStockSymbol(symbol: string): string {
+    const symServer: Record<string, string> = {
+        "WDS": "",
+        "ECP": "ecorp",
+        "MGCP": "megacorp",
+        "BLD": "blade",
+        "CLRK": "clarkinc",
+        "OMTK": "omnitek",
+        "FSIG": "4sigma",
+        "KGI": "kuai-gong",
+        "DCOMM": "defcomm",
+        "VITA": "vitalife",
+        "ICRS": "icarus",
+        "UNV": "univ-energy",
+        "AERO": "aerocorp",
+        "SLRS": "solaris",
+        "GPH": "global-pharm",
+        "NVMD": "nova-med",
+        "LXO": "lexo-corp",
+        "RHOC": "rho-construction",
+        "APHE": "alpha-ent",
+        "SYSC": "syscore",
+        "CTK": "comptek",
+        "NTLK": "netlink",
+        "OMGA": "omega-net",
+        "JGN": "joesguns",
+        "SGC": "sigma-cosmetics",
+        "CTYS": "catalyst",
+        "MDYN": "microdyne",
+        "TITN": "titan-labs",
+        "FLCM": "fulcrumtech",
+        "STM": "stormtech",
+        "HLS": "helios",
+        "OMN": "omnia",
+        "FNS": "foodnstuff"
+    }
+
+    return symServer[symbol];
+}
