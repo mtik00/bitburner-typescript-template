@@ -1,25 +1,35 @@
-// @ts-nocheck
 import { NS } from "@ns";
 import { getThreads } from "./helpers";
 
-const argsSchema = [
+interface FlagsSchema {
+    script: string;
+    target: string;
+    homeRamAdjust: number;
+    maxRam: boolean;
+}
+
+const argsSchema: [string, string | number | boolean | string[]][] = [
     ['script', 'v1-hack.js'],
     ['target', 'home'],
     ['homeRamAdjust', 32],
     ['maxRam', false],
-];
+]
 
 export async function main(ns: NS) {
-    const options = ns.flags(argsSchema);
+    const options = ns.flags(argsSchema) as unknown as FlagsSchema
 
-    const target = options.target;
-    const script = options.script;
-    const threads = getThreads(ns, script, target, options.homeRamAdjust, options.maxRam)
+    const threads = getThreads(
+        ns,
+        options.script,
+        options.target,
+        options.homeRamAdjust,
+        options.maxRam,
+    )
 
     ns.tprintf(
         "Maximum threads for %s on server %s: %s",
-        script,
-        target,
+        options.script,
+        options.target,
         threads,
     )
 }

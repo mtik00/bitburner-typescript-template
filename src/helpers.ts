@@ -459,24 +459,6 @@ export function getProcessInfo(ns: NS, host: string): string {
     return `${filename}(${target === undefined ? '??' : target})`
 }
 
-export function createFlagAutocomplete(flagConfig: Record<string, any>) {
-    return function (data: any, args: any) {
-        const lastArg = args[args.length - 1];
-        const previousArg = args.length > 1 ? args[args.length - 2] : null;
-
-        // Check each flag in the config
-        for (const [flag, values] of Object.entries(flagConfig)) {
-            if (lastArg === flag || previousArg === flag) {
-                // If values is a function, call it with data
-                return typeof values === 'function' ? values(data) : values;
-            }
-        }
-
-        // Return list of available flags
-        return Object.keys(flagConfig);
-    };
-}
-
 export function filterHackableServers(data: any): string[] {
     return data.servers.filter((s: string) => s !== "home" && !s.startsWith("pserv"));
 }
