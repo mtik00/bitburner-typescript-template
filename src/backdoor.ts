@@ -13,7 +13,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tprintf("Connecting to %s though: %s", target, results)
 
   for (const server of results) {
-    ns.tprint("...connecting to", server)
+    ns.tprint("...connecting to ", server)
     await ns.singularity.connect(server)
   }
 
