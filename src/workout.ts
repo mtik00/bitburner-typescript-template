@@ -19,7 +19,7 @@ export async function main(ns: NS) {
         let currentStat = ns.getPlayer().skills[statName];
 
         while (currentStat < targetLevel) {
-            await ns.singularity.gymWorkout(trainingGym, shorthand);
+            await ns.singularity.gymWorkout(trainingGym, shorthand, false);
             await ns.asleep(5000);
             currentStat = ns.getPlayer().skills[statName];
         }
