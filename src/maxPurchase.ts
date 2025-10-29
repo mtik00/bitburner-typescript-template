@@ -28,6 +28,7 @@ export async function main(ns: NS): Promise<void> {
     var ram = 2
 
     let index = 0
+    let numCantAfford = 0
 
     while (ram < maxRam) {
         ram *= 2
@@ -48,6 +49,7 @@ export async function main(ns: NS): Promise<void> {
                 ns.formatNumber(totalUpgradeCost)
             )
         } else if (totalUpgradeCost > myMoney) {
+            numCantAfford += 1
             ns.tprintf(
                 "WARN: You cannot upgrade/purchase all servers from %s to: %s (%i) for %s",
                 ns.formatRam(startingRam, 0),
@@ -55,6 +57,10 @@ export async function main(ns: NS): Promise<void> {
                 ram,
                 ns.formatNumber(totalUpgradeCost)
             )
+        }
+
+        if (numCantAfford > 1) {
+            break
         }
     }
 }
