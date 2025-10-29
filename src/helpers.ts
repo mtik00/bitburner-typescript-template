@@ -88,7 +88,7 @@ export function runApps(ns: NS, target: string): number {
  * @param force  Ignore invalid state
  * @returns 
  */
-export function openServer(ns: NS, target: string, force: boolean = false) {
+export function openServer(ns: NS, target: string, force: boolean = false, quiet = false): boolean {
     if ((target === "home") || target.startsWith("pserv")) {
         return true;
     }
@@ -98,14 +98,14 @@ export function openServer(ns: NS, target: string, force: boolean = false) {
     const requiredPorts = ns.getServerNumPortsRequired(target);
 
     if ((requiredPorts > portCount) && !force) {
-        ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, target, requiredPorts);
+        !quiet && ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, target, requiredPorts);
         return false;
     }
 
     try {
         ns.nuke(target);
     } catch (error) {
-        ns.tprintf("Can't nuke %s: %s", target, error);
+        !quiet && ns.tprintf("Can't nuke %s: %s", target, error);
         if (!force) {
             return false;
         }

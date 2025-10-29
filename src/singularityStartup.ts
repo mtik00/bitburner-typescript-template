@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { backdoorServers, waitForPID } from "./helpersScriptInterface";
 
 export async function main(ns: NS): Promise<void> {
 
@@ -10,5 +11,12 @@ export async function main(ns: NS): Promise<void> {
     while (ns.getPlayer().skills.hacking < 10) {
         ns.singularity.universityCourse("Rothman University", "Computer Science", true)
         await ns.asleep(5000)
+    }
+
+    for (const server of backdoorServers) {
+        if (!ns.getServer(server).backdoorInstalled) {
+            const pid = ns.exec("backdoor.js", "home", 1, server)
+            waitForPID(ns, pid, "home")
+        }
     }
 }
