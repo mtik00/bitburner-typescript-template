@@ -405,7 +405,7 @@ export class SwarmServer {
 
         for (const proc of this.procs) {
             if (proc.filename.includes("h")) {
-                return proc.filename
+                return `${proc.filename}(${proc.threads})`
             }
         }
         return "?"
