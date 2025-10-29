@@ -104,3 +104,42 @@ export function getArgValue(args: ScriptArg[], flag: string): ScriptArg | undefi
     }
     return undefined;
 }
+
+
+
+export function waitForScript(ns: NS, filename: string, hostname: string = "home", sleep = 5000) {
+    let idx = 0
+    let found = true
+    while (found && idx < 1000) {
+        idx += 1
+        found = false
+
+        const procs = ns.ps(hostname)
+
+        for (const proc of procs) {
+            if (proc.filename == filename) {
+                ns.asleep(sleep)
+                found = true
+            }
+        }
+    }
+}
+
+
+export function waitForPID(ns: NS, pid: number, hostname: string = "home", sleep = 5000) {
+    let idx = 0
+    let found = true
+    while (found && idx < 1000) {
+        idx += 1
+        found = false
+
+        const procs = ns.ps(hostname)
+
+        for (const proc of procs) {
+            if (proc.pid == pid) {
+                ns.asleep(sleep)
+                found = true
+            }
+        }
+    }
+}

@@ -1,7 +1,9 @@
 
 import { NS } from "@ns";
 import { execHack, scanAllServers, openServer, sortServers } from './helpers.js'
-import { createFlagAutocomplete } from "./helpersScriptInterface.js";
+import { createFlagAutocomplete, waitForPID } from "./helpersScriptInterface.js";
+
+const SINGULARITY = true
 
 interface FlagsSchema {
   script: string;
@@ -26,6 +28,11 @@ export async function main(ns: NS): Promise<void> {
   if (options.target === '') {
     ns.tprint("USAGE: ./startup.js --target <hostname>")
     return
+  }
+
+  if (SINGULARITY) {
+    const pid = ns.exec("singluarityStartup.js", "home")
+    waitForPID(ns, pid)
   }
 
   // Make sure the target is open before we start to hack it.
