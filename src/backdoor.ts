@@ -32,8 +32,8 @@ export async function main(ns: NS): Promise<void> {
   try {
     await ns.singularity.installBackdoor()
   } catch (error) {
-    ns.singularity.connect("home")
   }
+  ns.singularity.connect("home")
   ns.tprint("...done")
 
 }
