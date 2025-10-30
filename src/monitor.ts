@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NS } from "@ns";
 
 export async function main(ns: NS) {
@@ -21,7 +22,7 @@ export async function main(ns: NS) {
         const maxMoney = ns.getServerMaxMoney(server);
         const minSec = ns.getServerMinSecurityLevel(server);
         const sec = ns.getServerSecurityLevel(server);
-        ns.clearLog(server);
+        ns.clearLog();
         ns.print(`${server}:`);
         ns.print(` $_______: $${ns.formatNumber(money, 2)} / $${ns.formatNumber(maxMoney, 2)} (${(money / maxMoney * 100).toFixed(2)}%)`);
         ns.print(` security: +${(sec - minSec).toFixed(2)}`);

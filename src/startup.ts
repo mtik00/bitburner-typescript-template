@@ -27,7 +27,7 @@ export function autocomplete(data: any, args: any) {
  * 
  * @param ns 
  */
-function singularityStartup(ns: NS) {
+async function singularityStartup(ns: NS) {
   const freeRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home")
   const costRam = ns.getScriptRam("singularityStartup.js", "home")
 
@@ -52,7 +52,7 @@ export async function main(ns: NS): Promise<void> {
     return
   }
 
-  SINGULARITY && singularityStartup(ns)
+  SINGULARITY && await singularityStartup(ns)
 
   // Make sure the target is open before we start to hack it.
   openServer(ns, options.target)
