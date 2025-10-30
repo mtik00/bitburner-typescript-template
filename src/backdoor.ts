@@ -4,6 +4,17 @@ import { filterHackableServers } from "./helpersScriptInterface";
 
 export async function main(ns: NS): Promise<void> {
   const target = ns.args[0];
+  if (target === undefined) {
+    return
+  }
+
+  const hackSkill = ns.getHackingLevel()
+  const hackRequired = ns.getServerRequiredHackingLevel(target.toString())
+  if (hackSkill < hackRequired) {
+    ns.print(`can't hack ${target} yet`)
+    return
+  }
+
   const [results, isFound] = findPath(ns, target.toString(), "home", [], [], false)
   if (!isFound) {
     ns.tprintf("%s not found", target)
@@ -18,10 +29,13 @@ export async function main(ns: NS): Promise<void> {
   }
 
   ns.tprintf("Installing backdoor on %s...", target)
-  await ns.singularity.installBackdoor()
+  try {
+    await ns.singularity.installBackdoor()
+  } catch (error) {
+    ns.singularity.connect("home")
+  }
   ns.tprint("...done")
 
-  await ns.singularity.connect("home")
 }
 
 export function autocomplete(data: any, args: any) {

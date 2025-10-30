@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { openServer } from "./helpers";
 import { backdoorServers, waitForPID } from "./helpersScriptInterface";
 
 const programs = [
@@ -15,6 +16,9 @@ const programs = [
 ]
 
 export async function main(ns: NS): Promise<void> {
+    ns.disableLog("ALL");
+    ns.print("#### singularityStartup")
+
     const player = ns.getPlayer()
     const myMoney = player.money
     if (!ns.hasTorRouter() && myMoney > 1000000) {
@@ -45,19 +49,46 @@ export async function main(ns: NS): Promise<void> {
     }
 
     while (ns.getPlayer().skills.hacking < 10) {
+        ns.print("studying Computer Science")
+
+        if (ns.getPlayer().city != "Sector-12") {
+            ns.singularity.travelToCity("Sector-12")
+        }
+
         ns.singularity.universityCourse("Rothman University", "Computer Science", true)
         await ns.asleep(5000)
     }
 
     for (const hostname of backdoorServers) {
         const server = ns.getServer(hostname)
-        const hackDifficulty = server.hackDifficulty !== undefined ? server.hackDifficulty : 1E10
+
+        if (server === undefined) {
+            continue
+        } else if (server.backdoorInstalled) {
+            ns.print(`backoor already installed on ${hostname}`)
+            continue
+        }
+
+        const hackDifficulty = ns.getServerRequiredHackingLevel(hostname)
         const numOpenPortsRequired = server.numOpenPortsRequired !== undefined ? server.numOpenPortsRequired : 1E10
         const openPortCount = server.openPortCount !== undefined ? server.openPortCount : 1E10
 
-        if (hackDifficulty <= player.skills.hacking && numOpenPortsRequired <= openPortCount) {
-            const pid = ns.exec("backdoor.js", "home", 1, hostname)
-            waitForPID(ns, pid, "home")
+        if (ns.getHackingLevel() < hackDifficulty) {
+            ns.print(`can't hack ${hostname} yet.  Have ${player.skills.hacking}, need ${hackDifficulty}`)
+            continue
+        } else if (numOpenPortsRequired < openPortCount) {
+            ns.print(`can't hack ${hostname} yet.  Have ${openPortCount} ports opened, need ${numOpenPortsRequired}`)
+            continue
         }
+
+        openServer(ns, hostname)
+        ns.nuke(hostname)
+
+        ns.print(`running backdoor on ${hostname}`)
+        const pid = ns.exec("backdoor.js", "home", 1, hostname)
+        waitForPID(ns, pid, "home")
+        ns.print(`...done with ${hostname}`)
     }
+
+    ns.print("...startup complete")
 }

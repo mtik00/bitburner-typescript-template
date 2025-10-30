@@ -22,6 +22,28 @@ export function autocomplete(data: any, args: any) {
   })(data, args);
 }
 
+/**
+ * A script to use singularity functions to automate game startup.
+ * 
+ * @param ns 
+ */
+function singularityStartup(ns: NS) {
+  const freeRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home")
+  const costRam = ns.getScriptRam("singularityStartup.js", "home")
+
+  if (freeRam >= costRam) {
+    const pid = ns.exec("singularityStartup.js", "home")
+    if (pid > 0) {
+      // ns.ui.openTail(pid)
+      waitForPID(ns, pid)
+    } else {
+      ns.tprint("ERROR: Could not start singularityStartup.js")
+    }
+  } else {
+    ns.tprint("WARN: Not enough free ram to run singularityStartup.js")
+  }
+}
+
 export async function main(ns: NS): Promise<void> {
   const options = ns.flags(argsSchema) as unknown as FlagsSchema
 
@@ -30,10 +52,7 @@ export async function main(ns: NS): Promise<void> {
     return
   }
 
-  if (SINGULARITY) {
-    const pid = ns.exec("singluarityStartup.js", "home")
-    waitForPID(ns, pid)
-  }
+  SINGULARITY && singularityStartup(ns)
 
   // Make sure the target is open before we start to hack it.
   openServer(ns, options.target)
