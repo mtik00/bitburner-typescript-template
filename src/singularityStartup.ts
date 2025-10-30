@@ -12,7 +12,7 @@ const programs = [
     "DeepscanV1.exe",
     "DeepscanV2.exe",
     "AutoLink.exe",
-    "Formulas.exe",
+    // "Formulas.exe",
 ]
 
 export async function main(ns: NS): Promise<void> {
@@ -44,6 +44,10 @@ export async function main(ns: NS): Promise<void> {
                 } else {
                     ns.tprint(`Purchased ${program}`)
                 }
+            } else {
+                // Don't waste money on cheaper things; wait for the hacks.
+                ns.tprint(`Need $${ns.formatNumber(cost, 2)} to purchase ${program}`)
+                break
             }
         }
     }
