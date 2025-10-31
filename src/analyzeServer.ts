@@ -23,6 +23,7 @@ ${server}:
     RAM          : ${ram[1]} / ${ram[0]} (${ram[1] / ram[0] * 100}%)
     $            : $${ns.formatNumber(money, 2)} / $${ns.formatNumber(maxMoney, 2)} (${(money / maxMoney * 100).toFixed(2)}%)
     security     : ${minSec.toFixed(2)} / ${sec.toFixed(2)}
+    level        : ${ns.getServerRequiredHackingLevel(server)}
     growth       : ${ns.getServerGrowth(server)}
     hack time    : ${ns.tFormat(ns.getHackTime(server))}
     grow time    : ${ns.tFormat(ns.getGrowTime(server))}
