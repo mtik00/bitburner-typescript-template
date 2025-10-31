@@ -14,7 +14,8 @@ export const backdoorServers = new Set([
     "nwo",
     "omnitek",
     "fulcrumtech",
-    "fulcrumassets"
+    "fulcrumassets",
+    "iron-gym",
 ]);
 
 
