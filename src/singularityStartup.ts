@@ -16,7 +16,8 @@ const programs = [
 ]
 
 export async function main(ns: NS): Promise<void> {
-    ns.disableLog("ALL");
+    ns.disableLog("ALL")
+    ns.ui.openTail()
     ns.print("#### singularityStartup")
 
     const player = ns.getPlayer()
@@ -59,17 +60,24 @@ export async function main(ns: NS): Promise<void> {
             ns.singularity.travelToCity("Sector-12")
         }
 
-        ns.singularity.universityCourse("Rothman University", "Computer Science", true)
+        const currentWork = ns.singularity.getCurrentWork();
+
+        if (!(currentWork?.type === "CLASS" && currentWork.classType === "Computer Science")) {
+            ns.singularity.universityCourse("Rothman University", "Computer Science", true);
+        }
+
         await ns.asleep(5000)
     }
 
     // Keep studying, but put it in the background so it's obvious we're done.
+    ns.singularity.stopAction()
     ns.singularity.universityCourse("Rothman University", "Computer Science", false)
 
     for (const hostname of backdoorServers) {
         const server = ns.getServer(hostname)
 
         if (server === undefined) {
+            ns.print(`Could not get server: ${hostname}`)
             continue
         } else if (server.backdoorInstalled) {
             ns.print(`backoor already installed on ${hostname}`)
