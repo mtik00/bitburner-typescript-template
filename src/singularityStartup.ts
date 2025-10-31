@@ -63,6 +63,9 @@ export async function main(ns: NS): Promise<void> {
         await ns.asleep(5000)
     }
 
+    // Keep studying, but put it in the background so it's obvious we're done.
+    ns.singularity.universityCourse("Rothman University", "Computer Science", false)
+
     for (const hostname of backdoorServers) {
         const server = ns.getServer(hostname)
 
