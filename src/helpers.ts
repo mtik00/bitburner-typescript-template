@@ -138,6 +138,7 @@ export function execHack(
     quiet = true,
 ) {
 
+    const nquiet = !quiet
     if (target === "home" || target.startsWith("pserv")) {
         return
     }
@@ -153,10 +154,10 @@ export function execHack(
     const hostHackingLevel = ns.getServerRequiredHackingLevel(hostServer)
 
     if (targetHackingLevel > myHackingLevel) {
-        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, targetHackingLevel);
+        nquiet && ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", target, targetHackingLevel);
         return;
     } else if (hostHackingLevel > myHackingLevel) {
-        ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", hostServer, hostHackingLevel);
+        nquiet && ns.tprintf("WARN: Insufficient hacking skill for %s; need: %s", hostServer, hostHackingLevel);
         return;
     }
 
@@ -169,7 +170,7 @@ export function execHack(
     const threads = getThreads(ns, script, hostServer)
 
     if (threads < 1) {
-        !quiet && ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
+        nquiet && ns.tprintf("Not enough RAM left on %s to run %s", hostServer, script);
     } else {
         ns.tprintf("---- Executing hack on %s from %s", target, hostServer);
         ns.scp(script, hostServer);

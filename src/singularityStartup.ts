@@ -15,9 +15,14 @@ const programs = [
     // "Formulas.exe",
 ]
 
+function studyingCompSci(ns: NS): boolean {
+    const currentWork = ns.singularity.getCurrentWork();
+    return currentWork?.type === "CLASS" && currentWork.classType === "Computer Science"
+}
+
 export async function main(ns: NS): Promise<void> {
     ns.disableLog("ALL")
-    ns.ui.openTail()
+    // ns.ui.openTail()
     ns.print("#### singularityStartup")
 
     const player = ns.getPlayer()
@@ -53,7 +58,9 @@ export async function main(ns: NS): Promise<void> {
         }
     }
 
+    let initialStudy = false
     while (ns.getPlayer().skills.hacking < 10) {
+        initialStudy = true
         ns.print("studying Computer Science")
 
         if (ns.getPlayer().city != "Sector-12") {
@@ -62,7 +69,7 @@ export async function main(ns: NS): Promise<void> {
 
         const currentWork = ns.singularity.getCurrentWork();
 
-        if (!(currentWork?.type === "CLASS" && currentWork.classType === "Computer Science")) {
+        if (!studyingCompSci(ns)) {
             ns.singularity.universityCourse("Rothman University", "Computer Science", true);
         }
 
@@ -70,8 +77,10 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Keep studying, but put it in the background so it's obvious we're done.
-    ns.singularity.stopAction()
-    ns.singularity.universityCourse("Rothman University", "Computer Science", false)
+    if (initialStudy && studyingCompSci(ns)) {
+        ns.singularity.stopAction()
+        ns.singularity.universityCourse("Rothman University", "Computer Science", false)
+    }
 
     for (const hostname of backdoorServers) {
         const server = ns.getServer(hostname)
