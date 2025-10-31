@@ -27,15 +27,8 @@ ${server}:
     hack time    : ${ns.tFormat(ns.getHackTime(server))}
     grow time    : ${ns.tFormat(ns.getGrowTime(server))}
     weaken time  : ${ns.tFormat(ns.getWeakenTime(server))}
-    grow x2      : ${(ns.growthAnalyze(server, 2)).toFixed(2)} threads
-    grow x3      : ${(ns.growthAnalyze(server, 3)).toFixed(2)} threads
-    grow x4      : ${(ns.growthAnalyze(server, 4)).toFixed(2)} threads
-    hack 10%     : ${(.10 / ns.hackAnalyze(server)).toFixed(2)} threads
-    hack 25%     : ${(.25 / ns.hackAnalyze(server)).toFixed(2)} threads
-    hack 50%     : ${(.50 / ns.hackAnalyze(server)).toFixed(2)} threads
     hackChance   : ${(ns.hackAnalyzeChance(server) * 100).toFixed(2)}%
-    Req ports    : ${ns.getServer(server).numOpenPortsRequired}
-    Open ports   : ${ns.getServer(server).openPortCount}
+    Ports        : ${ns.getServer(server).openPortCount} of ${ns.getServer(server).numOpenPortsRequired} required
     Req Hack Lvl : ${ns.getServerRequiredHackingLevel(server)}
     Backdoor?    : ${ns.getServer(server).backdoorInstalled ? "YES" : "NO"}
 `);
