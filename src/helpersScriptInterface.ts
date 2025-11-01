@@ -118,7 +118,7 @@ export function getArgValue(args: ScriptArg[], flag: string): ScriptArg | undefi
 
 
 
-export function waitForScript(ns: NS, filename: string, hostname: string = "home", sleep = 5000) {
+export async function waitForScriptComplete(ns: NS, filename: string, hostname: string = "home", sleep = 5000) {
     let idx = 0
     let found = true
     while (found && idx < 1000) {
@@ -137,7 +137,7 @@ export function waitForScript(ns: NS, filename: string, hostname: string = "home
 }
 
 
-export function waitForPID(ns: NS, pid: number, hostname: string = "home", sleep = 5000) {
+export async function waitForPIDComplete(ns: NS, pid: number, hostname: string = "home", sleep = 5000) {
     let idx = 0
     let found = true
     while (found && idx < 1000) {

@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { createFlagAutocomplete } from "./helpersScriptInterface";
-import { waitForPID } from "./helpersScriptInterface";
+import { waitForPIDComplete } from "./helpersScriptInterface";
 import { openServer, sortServers, scanAllServers, execHack } from "./helpers";
 
 const SINGULARITY = true
@@ -47,16 +47,17 @@ async function singularityStartup(ns: NS) {
     const pid = ns.exec("singularityStartup.js", "home")
     if (pid > 0) {
       // ns.ui.openTail(pid)
-      waitForPID(ns, pid)
+      await waitForPIDComplete(ns, pid)
     } else {
-      ns.tprint("ERROR: Could not start singularityStartup.js")
+      ns.print("ERROR: Could not start singularityStartup.js")
     }
   } else {
-    ns.tprint("WARN: Not enough free ram to run singularityStartup.js")
+    ns.print("WARN: Not enough free ram to run singularityStartup.js")
   }
 }
 
 export async function main(ns: NS): Promise<void> {
+  ns.disableLog("ALL")
   const options = ns.flags(argsSchema) as unknown as FlagsSchema
 
   if (options.help) {
@@ -80,6 +81,7 @@ export async function main(ns: NS): Promise<void> {
       execHack(ns, options.target, options.script, false, servers[i], undefined, undefined, true);
     }
 
-    await ns.asleep(5000)
+    ns.print("...waiting 60 seconds")
+    await ns.asleep(60000)
   }
 }

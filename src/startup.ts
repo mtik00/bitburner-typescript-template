@@ -1,7 +1,7 @@
 
 import { NS } from "@ns";
 import { execHack, scanAllServers, openServer, sortServers } from './helpers.js'
-import { createFlagAutocomplete, waitForPID } from "./helpersScriptInterface.js";
+import { createFlagAutocomplete, waitForPIDComplete } from "./helpersScriptInterface.js";
 
 const SINGULARITY = true
 
@@ -35,7 +35,7 @@ async function singularityStartup(ns: NS) {
     const pid = ns.exec("singularityStartup.js", "home")
     if (pid > 0) {
       // ns.ui.openTail(pid)
-      waitForPID(ns, pid)
+      await waitForPIDComplete(ns, pid)
     } else {
       ns.tprint("ERROR: Could not start singularityStartup.js")
     }

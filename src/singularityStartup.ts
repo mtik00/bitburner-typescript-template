@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { openServer } from "./helpers";
-import { backdoorServers, waitForPID } from "./helpersScriptInterface";
+import { backdoorServers, waitForPIDComplete } from "./helpersScriptInterface";
 
 const programs = [
     "BruteSSH.exe",
@@ -110,7 +110,7 @@ export async function main(ns: NS): Promise<void> {
 
         ns.print(`running backdoor on ${hostname}`)
         const pid = ns.exec("backdoor.js", "home", 1, hostname)
-        waitForPID(ns, pid, "home")
+        await waitForPIDComplete(ns, pid, "home")
         ns.print(`...done with ${hostname}`)
     }
 

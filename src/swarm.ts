@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { getSwarm, getThreads, scanAllServers } from "./helpers";
+import { getSwarm, sortServers, scanAllServers } from "./helpers";
 
 
 export async function main(ns: NS) {
@@ -47,11 +47,8 @@ export async function main(ns: NS) {
             break;
     }
 
-    if (script === '') {
-        ns.tprint("ERROR: Unknown command:", command)
-    }
-
     if (next) {
+        let hostnames: string[] = []
         for (const hostname of scanAllServers(ns, true)) {
             if (hostname == "home" || hostname.startsWith("pserv")) {
                 continue
@@ -59,11 +56,16 @@ export async function main(ns: NS) {
 
             const need = ns.getServerRequiredHackingLevel(hostname)
             if (need > ns.getHackingLevel()) {
-                ns.tprint(`${hostname}: need ${need}`)
+                hostnames.push(hostname)
             }
         }
 
-    } else {
+        const servers = sortServers(ns, "requiredHackingSkill", hostnames)
+        for (const server of servers) {
+            ns.tprint(`${server}: need ${ns.getServerRequiredHackingLevel(server)}`)
+        }
+
+    } else if (script !== '') {
         for (const server of getSwarm(ns)) {
             if (!home && server.hostname === "home") {
                 !quiet && ns.tprint("...ignoring home")
@@ -86,5 +88,7 @@ export async function main(ns: NS) {
             ns.scp(script, hostServer);
             ns.exec(script, hostServer, threads, ...scriptArgs);
         }
+    } else {
+        ns.tprint("nothing to do")
     }
 }
