@@ -1,12 +1,16 @@
-import { NS, GymLocationName } from "@ns";
+import { NS, GymLocationName, GymType } from "@ns";
 
-const gym = "Iron Gym"
 const statMap = {
     str: 'strength',
     def: 'defense',
     dex: 'dexterity',
     agi: 'agility',
 } as const;
+
+function isWorkingOut(ns: NS, stat: GymType): boolean {
+    const currentWork = ns.singularity.getCurrentWork();
+    return currentWork?.type === "CLASS" && currentWork.classType === stat;
+}
 
 export async function main(ns: NS) {
     const targetLevelArg = ns.args[0]
@@ -19,8 +23,10 @@ export async function main(ns: NS) {
         let currentStat = ns.getPlayer().skills[statName];
 
         while (currentStat < targetLevel) {
-            await ns.singularity.gymWorkout(trainingGym, shorthand, false);
-            await ns.asleep(5000);
+            if (!isWorkingOut(ns, shorthand as GymType)) {
+                ns.singularity.gymWorkout(trainingGym, shorthand, false);
+            }
+            await ns.asleep(500);
             currentStat = ns.getPlayer().skills[statName];
         }
 
