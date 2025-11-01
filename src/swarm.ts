@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { getSwarm, getThreads } from "./helpers";
+import { getSwarm, getThreads, scanAllServers } from "./helpers";
 
 
 export async function main(ns: NS) {
@@ -15,6 +15,7 @@ export async function main(ns: NS) {
     const select = options.select.toString()
     const quiet = options.quiet.toString() === 'true'
 
+    let next = false
     let home = false
     let purchased = false
     let script = ''
@@ -40,7 +41,8 @@ export async function main(ns: NS) {
             script = "hWeaken.js"
             scriptArgs = ["--target", target, "--loop"]
             break;
-
+        case "next":
+            next = true
         default:
             break;
     }
@@ -49,28 +51,40 @@ export async function main(ns: NS) {
         ns.tprint("ERROR: Unknown command:", command)
     }
 
-    for (const server of getSwarm(ns)) {
-        if (!home && server.hostname === "home") {
-            !quiet && ns.tprint("...ignoring home")
-            continue
-        } else if (!purchased && server.hostname.startsWith("pserv")) {
-            !quiet && ns.tprint("...ignoring", server.hostname)
-            continue
+    if (next) {
+        for (const hostname of scanAllServers(ns, true)) {
+            if (hostname == "home" || hostname.startsWith("pserv")) {
+                continue
+            }
+
+            const need = ns.getServerRequiredHackingLevel(hostname)
+            if (need > ns.getHackingLevel()) {
+                ns.tprint(`${hostname}: need ${need}`)
+            }
         }
 
-        const hostServer = server.hostname
-        const threads = server.getThreads(script)
+    } else {
+        for (const server of getSwarm(ns)) {
+            if (!home && server.hostname === "home") {
+                !quiet && ns.tprint("...ignoring home")
+                continue
+            } else if (!purchased && server.hostname.startsWith("pserv")) {
+                !quiet && ns.tprint("...ignoring", server.hostname)
+                continue
+            }
 
-        if (threads < 1) {
-            continue
-        } else if (!isFinite(threads)) {
-            ns.tprint("ERROR: Could not calculate threads for", hostServer)
-            continue
+            const hostServer = server.hostname
+            const threads = server.getThreads(script)
+
+            if (threads < 1) {
+                continue
+            } else if (!isFinite(threads)) {
+                ns.tprint("ERROR: Could not calculate threads for", hostServer)
+                continue
+            }
+
+            ns.scp(script, hostServer);
+            ns.exec(script, hostServer, threads, ...scriptArgs);
         }
-
-        ns.scp(script, hostServer);
-        ns.exec(script, hostServer, threads, ...scriptArgs);
     }
-
-
 }
