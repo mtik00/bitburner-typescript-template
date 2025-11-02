@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { openServer } from "./helpers";
+import { openServer, sortServers, scanAllServers, appCount } from "./helpers";
 import { backdoorServers, waitForPIDComplete } from "./helpersScriptInterface";
 
 const programs = [
@@ -80,6 +80,31 @@ export async function main(ns: NS): Promise<void> {
     if (initialStudy && studyingCompSci(ns)) {
         ns.singularity.stopAction()
         ns.singularity.universityCourse("Rothman University", "Computer Science", false)
+    }
+
+    // Look for new servers to hack
+    // Make sure the target is open before we start to hack it.
+    const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
+    const myLevel = ns.getHackingLevel()
+    const myApps = appCount(ns)
+
+    for (const hostname of hostnames) {
+        const server = ns.getServer(hostname)
+        const openPortCount = server.openPortCount || 0
+        const numOpenPortsRequired = server.numOpenPortsRequired || 0
+        if (ns.getServerRequiredHackingLevel(hostname) > myLevel) {
+            break
+        } else if (server.hasAdminRights) {
+            continue
+        }
+
+        if (openPortCount < numOpenPortsRequired && numOpenPortsRequired <= myApps) {
+            // Only nuke it if we opened it
+            if (openServer(ns, hostname, undefined, true)) {
+                ns.nuke(hostname)
+                ns.print(`Acquired new server: ${hostname}`)
+            }
+        }
     }
 
     for (const hostname of backdoorServers) {
