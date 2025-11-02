@@ -40,6 +40,31 @@ export function getThreads(
     return threads;
 }
 
+export function appCount(ns: NS): number {
+    let portCount = 0;
+    if (ns.fileExists("BruteSSH.exe")) {
+        portCount++;
+    }
+
+    if (ns.fileExists("FTPCrack.exe")) {
+        portCount++;
+    }
+
+    if (ns.fileExists("relaySMTP.exe")) {
+        portCount++;
+    }
+
+    if (ns.fileExists("HTTPWorm.exe")) {
+        portCount++;
+    }
+
+    if (ns.fileExists("SQLInject.exe")) {
+        portCount++;
+    }
+
+    return portCount;
+}
+
 /**
  * 
  * @param ns 
