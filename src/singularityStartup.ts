@@ -52,7 +52,7 @@ export async function main(ns: NS): Promise<void> {
                 }
             } else {
                 // Don't waste money on cheaper things; wait for the hacks.
-                ns.tprint(`Need $${ns.formatNumber(cost, 2)} to purchase ${program}`)
+                ns.print(`Need $${ns.formatNumber(cost, 2)} to purchase ${program}`)
                 break
             }
         }
@@ -105,13 +105,14 @@ export async function main(ns: NS): Promise<void> {
             continue
         }
 
-        openServer(ns, hostname)
-        ns.nuke(hostname)
+        if (openServer(ns, hostname, undefined, true)) {
+            ns.nuke(hostname)
 
-        ns.print(`running backdoor on ${hostname}`)
-        const pid = ns.exec("backdoor.js", "home", 1, hostname)
-        await waitForPIDComplete(ns, pid, "home")
-        ns.print(`...done with ${hostname}`)
+            ns.print(`running backdoor on ${hostname}`)
+            const pid = ns.exec("backdoor.js", "home", 1, hostname)
+            await waitForPIDComplete(ns, pid, "home")
+            ns.print(`...done with ${hostname}`)
+        }
     }
 
     ns.print("...startup complete")

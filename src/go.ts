@@ -72,8 +72,9 @@ export async function main(ns: NS): Promise<void> {
     SINGULARITY && await singularityStartup(ns)
 
     // Make sure the target is open before we start to hack it.
-    openServer(ns, options.target)
-    ns.nuke(options.target)
+    if (openServer(ns, options.target, undefined, true)) {
+      ns.nuke(options.target)
+    }
 
     // Look for new servers
     const servers = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
@@ -81,7 +82,7 @@ export async function main(ns: NS): Promise<void> {
       execHack(ns, options.target, options.script, false, servers[i], undefined, undefined, true);
     }
 
-    ns.print("...waiting 60 seconds")
-    await ns.asleep(60000)
+    ns.print("...waiting 10 seconds")
+    await ns.asleep(10000)
   }
 }
