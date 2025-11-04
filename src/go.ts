@@ -17,11 +17,13 @@ function help(ns: NS) {
 interface FlagsSchema {
   script: string
   target: string
+  ptarget: string
   help: boolean
 }
 
 const argsSchema: [string, string | number | boolean | string[]][] = [
   ['target', 'joesguns'],
+  ['ptarget', 'n00dles'],
   ['script', 'v1-hack.js'],
   ['help', false],
 ]
@@ -29,6 +31,7 @@ const argsSchema: [string, string | number | boolean | string[]][] = [
 export function autocomplete(data: any, args: any) {
   return createFlagAutocomplete({
     "--target": (data: any) => data.servers,
+    "--ptarget": (data: any) => data.servers,
     "--script": (data: any) => data.scripts,
   })(data, args);
 }
@@ -77,9 +80,14 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Look for new servers
-    const servers = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
-    for (let i = 0; i < servers.length; ++i) {
-      execHack(ns, options.target, options.script, false, servers[i], undefined, undefined, true);
+    const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
+    for (const hostname of hostnames) {
+      let target = options.target
+      if (hostname.startsWith("pserv")) {
+        target = options.ptarget
+      }
+
+      execHack(ns, target, options.script, false, hostname, undefined, undefined, true);
     }
 
     ns.print("...waiting 10 seconds")
