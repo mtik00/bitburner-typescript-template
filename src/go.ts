@@ -44,7 +44,7 @@ async function singularityStartup(ns: NS) {
   const costRam = ns.getScriptRam("singularityStartup.js", "home")
 
   if (freeRam >= costRam) {
-    const pid = ns.exec("singularityStartup.js", "home")
+    const pid = ns.exec("singularityStartup.js", "home", { preventDuplicates: true })
     if (pid > 0) {
       // ns.ui.openTail(pid)
       await waitForPIDComplete(ns, pid)
