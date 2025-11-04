@@ -134,7 +134,7 @@ export async function main(ns: NS): Promise<void> {
             ns.nuke(hostname)
 
             ns.print(`running backdoor on ${hostname}`)
-            const pid = ns.exec("backdoor.js", "home", 1, hostname)
+            const pid = ns.exec("backdoor.js", "home", { preventDuplicates: true }, hostname)
             await waitForPIDComplete(ns, pid, "home")
             ns.print(`...done with ${hostname}`)
         }
