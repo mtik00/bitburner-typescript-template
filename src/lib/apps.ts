@@ -1,27 +1,12 @@
 import { NS } from "@ns";
+import { HACK_PROGRAMS, PURCHASED_SERVER_HOSTNAME } from "./const";
 
 export function appCount(ns: NS): number {
     let portCount = 0;
-    if (ns.fileExists("BruteSSH.exe")) {
-        portCount++;
-    }
+    for (const program of HACK_PROGRAMS) {
+        ns.fileExists(program) && portCount++
 
-    if (ns.fileExists("FTPCrack.exe")) {
-        portCount++;
     }
-
-    if (ns.fileExists("relaySMTP.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("HTTPWorm.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("SQLInject.exe")) {
-        portCount++;
-    }
-
     return portCount;
 }
 
@@ -32,35 +17,23 @@ export function appCount(ns: NS): number {
  * @returns integer: Numbe of apps ran
  */
 export function runApps(ns: NS, target: string): number {
-    if (target == "home") {
+    if (target == "home" || target.startsWith(PURCHASED_SERVER_HOSTNAME)) {
         return 99;
     }
 
-    let portCount = 0;
-    if (ns.fileExists("BruteSSH.exe")) {
-        ns.brutessh(target);
-        portCount++;
-    }
+    const portPrograms = [
+        { file: "BruteSSH.exe", fn: ns.brutessh },
+        { file: "FTPCrack.exe", fn: ns.ftpcrack },
+        { file: "relaySMTP.exe", fn: ns.relaysmtp },
+        { file: "HTTPWorm.exe", fn: ns.httpworm },
+        { file: "SQLInject.exe", fn: ns.sqlinject }
+    ];
 
-    if (ns.fileExists("FTPCrack.exe")) {
-        ns.ftpcrack(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("relaySMTP.exe")) {
-        ns.relaysmtp(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("HTTPWorm.exe")) {
-        ns.httpworm(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("SQLInject.exe")) {
-        ns.sqlinject(target);
-        portCount++;
-    }
-
-    return portCount;
+    return portPrograms.reduce((count, { file, fn }) => {
+        if (ns.fileExists(file)) {
+            fn.call(ns, target);
+            return count + 1;
+        }
+        return count;
+    }, 0);
 }

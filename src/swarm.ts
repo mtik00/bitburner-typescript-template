@@ -2,6 +2,7 @@ import { NS } from "@ns";
 import { sortServers } from "./helpers";
 import { getSwarm } from "./lib/swarm";
 import { scanAllServers } from "./lib/scan";
+import { PURCHASED_SERVER_HOSTNAME } from "./lib/const";
 
 
 export async function main(ns: NS) {
@@ -52,7 +53,7 @@ export async function main(ns: NS) {
     if (next) {
         let hostnames: string[] = []
         for (const hostname of scanAllServers(ns, true)) {
-            if (hostname == "home" || hostname.startsWith("pserv")) {
+            if (hostname == "home" || hostname.startsWith(PURCHASED_SERVER_HOSTNAME)) {
                 continue
             }
 
@@ -72,7 +73,7 @@ export async function main(ns: NS) {
             if (!home && server.hostname === "home") {
                 !quiet && ns.tprint("...ignoring home")
                 continue
-            } else if (!purchased && server.hostname.startsWith("pserv")) {
+            } else if (!purchased && server.hostname.startsWith(PURCHASED_SERVER_HOSTNAME)) {
                 !quiet && ns.tprint("...ignoring", server.hostname)
                 continue
             }

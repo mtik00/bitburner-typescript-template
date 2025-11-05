@@ -4,23 +4,42 @@ import { waitForPIDComplete } from "./lib/scripting";
 import { backdoorServers } from "./lib/const";
 import { scanAllServers } from "./lib/scan";
 import { appCount } from "./lib/apps";
+import { PROGRAMS } from "./lib/const";
 
-const programs = [
-    "BruteSSH.exe",
-    "FTPCrack.exe",
-    "relaySMTP.exe",
-    "HTTPWorm.exe",
-    "SQLInject.exe",
-    "ServerProfiler.exe",
-    "DeepscanV1.exe",
-    "DeepscanV2.exe",
-    "AutoLink.exe",
-    // "Formulas.exe",
-]
 
 function studyingCompSci(ns: NS): boolean {
     const currentWork = ns.singularity.getCurrentWork();
     return currentWork?.type === "CLASS" && currentWork.classType === "Computer Science"
+}
+
+function purchasePrograms(ns: NS) {
+    if (!ns.hasTorRouter()) {
+        return
+    }
+
+    // I currently don't care about Formulas.exe, and it's really expensive
+    // early game.
+    for (const program of PROGRAMS.filter(p => p !== "Formulas.exe")) {
+        if (ns.fileExists(program)) {
+            continue
+        }
+
+        const cost = ns.singularity.getDarkwebProgramCost(program)
+
+        if (cost <= ns.getPlayer().money) {
+            const success = ns.singularity.purchaseProgram(program);
+            if (!success) {
+                ns.tprint(`ERROR: Failed to purchase ${program}`)
+            } else {
+                ns.tprint(`Purchased ${program}`)
+            }
+        } else {
+            // Don't waste money on cheaper things; wait for the hacks.
+            ns.print(`Need $${ns.formatNumber(cost, 2)} to purchase ${program}`)
+            break
+        }
+    }
+
 }
 
 export async function main(ns: NS): Promise<void> {
@@ -39,27 +58,7 @@ export async function main(ns: NS): Promise<void> {
         }
     }
 
-    if (ns.hasTorRouter()) {
-        for (const program of programs) {
-            if (ns.fileExists(program)) {
-                continue
-            }
-
-            const cost = ns.singularity.getDarkwebProgramCost(program)
-            if (cost <= ns.getPlayer().money) {
-                const success = ns.singularity.purchaseProgram(program);
-                if (!success) {
-                    ns.tprint(`ERROR: Failed to purchase ${program}`)
-                } else {
-                    ns.tprint(`Purchased ${program}`)
-                }
-            } else {
-                // Don't waste money on cheaper things; wait for the hacks.
-                ns.print(`Need $${ns.formatNumber(cost, 2)} to purchase ${program}`)
-                break
-            }
-        }
-    }
+    ns.hasTorRouter() && purchasePrograms(ns)
 
     let initialStudy = false
     while (ns.getPlayer().skills.hacking < 10) {
@@ -69,8 +68,6 @@ export async function main(ns: NS): Promise<void> {
         if (ns.getPlayer().city != "Sector-12") {
             ns.singularity.travelToCity("Sector-12")
         }
-
-        const currentWork = ns.singularity.getCurrentWork();
 
         if (!studyingCompSci(ns)) {
             ns.singularity.universityCourse("Rothman University", "Computer Science", true);
@@ -82,6 +79,7 @@ export async function main(ns: NS): Promise<void> {
     // Keep studying, but put it in the background so it's obvious we're done.
     if (initialStudy && studyingCompSci(ns)) {
         ns.singularity.stopAction()
+        await ns.asleep(500)
         ns.singularity.universityCourse("Rothman University", "Computer Science", false)
     }
 

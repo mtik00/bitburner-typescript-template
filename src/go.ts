@@ -3,6 +3,7 @@ import { createFlagAutocomplete } from "./lib/autocomplete";
 import { waitForPIDComplete } from "./lib/scripting";
 import { openServer, sortServers, execHack } from "./helpers";
 import { scanAllServers } from "./lib/scan";
+import { PURCHASED_SERVER_HOSTNAME } from "./lib/const";
 
 const SINGULARITY = true
 
@@ -84,7 +85,7 @@ export async function main(ns: NS): Promise<void> {
     const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
     for (const hostname of hostnames) {
       let target = options.target
-      if (hostname.startsWith("pserv")) {
+      if (hostname.startsWith(PURCHASED_SERVER_HOSTNAME)) {
         target = options.ptarget
       }
 

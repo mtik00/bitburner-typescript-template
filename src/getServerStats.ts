@@ -2,6 +2,7 @@
 import { NS } from '@ns'
 import { scanAllServers } from './lib/scan'
 import { getArgValue } from './lib/autocomplete'
+import { PURCHASED_SERVER_HOSTNAME } from './lib/const'
 
 
 function get_action(ns: NS, host: string) {
@@ -65,7 +66,7 @@ export async function main(ns: NS) {
 
     for (var i in keys) {
         var key = keys[i]
-        if (key == "home" || key.startsWith("pserv") || ns.getServerMaxMoney(key) === 0)
+        if (key == "home" || key.startsWith(PURCHASED_SERVER_HOSTNAME) || ns.getServerMaxMoney(key) === 0)
             continue
         ns.tprint(stats[key])
     }

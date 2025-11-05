@@ -1,6 +1,6 @@
 import { NS, Server } from "@ns";
 import { getArgValue } from "./lib/autocomplete";
-import { HOME_RAM_KEEP } from "./lib/const";
+import { HOME_RAM_KEEP, PURCHASED_SERVER_HOSTNAME } from "./lib/const";
 import { runApps } from "./lib/apps";
 import { findPath } from "./lib/path";
 
@@ -52,7 +52,7 @@ export function getThreads(
  * @returns 
  */
 export function openServer(ns: NS, target: string, force: boolean = false, quiet = false): boolean {
-    if ((target === "home") || target.startsWith("pserv")) {
+    if ((target === "home") || target.startsWith(PURCHASED_SERVER_HOSTNAME)) {
         return true;
     }
 
@@ -102,7 +102,7 @@ export function execHack(
 ) {
 
     const nquiet = !quiet
-    if (target === "home" || target.startsWith("pserv")) {
+    if (target === "home" || target.startsWith(PURCHASED_SERVER_HOSTNAME)) {
         return
     }
 

@@ -1,4 +1,5 @@
 import { ScriptArg } from "@ns";
+import { PURCHASED_SERVER_HOSTNAME } from "./const";
 
 /**
  * A generic function for creating autocomplete data.
@@ -37,10 +38,10 @@ export function createFlagAutocomplete(flagConfig: Record<string, any>) {
 /**
  * 
  * @param data ns data
- * @returns A list of hostnames from the servers without "home" or "pserv"
+ * @returns A list of hostnames from the servers without our personal servers
  */
 export function filterHackableServers(data: any): string[] {
-    return data.servers.filter((s: string) => s !== "home" && !s.startsWith("pserv"));
+    return data.servers.filter((s: string) => s !== "home" && !s.startsWith(PURCHASED_SERVER_HOSTNAME));
 }
 
 /**
