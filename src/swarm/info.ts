@@ -1,5 +1,5 @@
 import { NS, } from "@ns";
-import { getSwarm } from "./lib/swarm"
+import { getSwarm } from "/lib/swarm"
 
 function printTable<T extends Record<string, any>>(
     ns: NS,

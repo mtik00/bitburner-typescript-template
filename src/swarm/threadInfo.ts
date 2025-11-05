@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { getSwarm } from "./lib/swarm";
+import { getSwarm } from "/lib/swarm";
 
 export async function main(ns: NS) {
     const options = ns.flags([
