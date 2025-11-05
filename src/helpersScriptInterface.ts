@@ -129,7 +129,7 @@ export async function waitForScriptComplete(ns: NS, filename: string, hostname: 
 
         for (const proc of procs) {
             if (proc.filename == filename) {
-                ns.asleep(sleep)
+                await ns.asleep(sleep)
                 found = true
             }
         }
@@ -148,7 +148,7 @@ export async function waitForPIDComplete(ns: NS, pid: number, hostname: string =
 
         for (const proc of procs) {
             if (proc.pid == pid) {
-                ns.asleep(sleep)
+                await ns.asleep(sleep)
                 found = true
             }
         }
