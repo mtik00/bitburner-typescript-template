@@ -1,5 +1,7 @@
-/** @param {NS} ns **/
-export async function main(ns) {
+// @ts-nocheck
+import { NS } from "@ns";
+
+export async function main(ns: NS) {
     solveContract(ns, ns.args[0], ns.args[1], 1);
 }
 
