@@ -186,9 +186,9 @@ export function execHack(
         return;
     }
 
-    if (!openServer(ns, target, force)) {
+    if (!openServer(ns, target, force, quiet)) {
         return;
-    } else if (!openServer(ns, hostServer, force)) {
+    } else if (!openServer(ns, hostServer, force, quiet)) {
         return;
     }
 
