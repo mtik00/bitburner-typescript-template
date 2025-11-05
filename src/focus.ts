@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { getThreads, scanAllServers } from './helpers.js'
+import { getThreads } from './helpers.js'
+import { scanAllServers } from "./lib/scan.js";
 
 export async function main(ns: NS): Promise<void> {
   const options = ns.flags([

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { getServerAction, scanAllServers } from "helpers"
+import { getServerAction } from "helpers"
+import { scanAllServers } from "./lib/scan";
 
 export async function main(ns: NS) {
 
