@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { filterHackableServers } from "./helpersScriptInterface"
+import { filterHackableServers } from "./lib/autocomplete";
 
 export async function main(ns: NS) {
     const args = ns.flags([["help", false]]);

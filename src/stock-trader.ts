@@ -2,7 +2,7 @@
 // requires TIX API Access and 4s Market Data
 
 import { NS } from "@ns";
-import { getServerFromStockSymbol } from "./helpersScriptInterface"
+import { getServerFromStockSymbol } from "./lib/trading";
 
 // defines if stocks can be shorted (see BitNode 8)
 const shortAvailable = false;

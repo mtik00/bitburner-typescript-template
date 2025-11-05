@@ -6,7 +6,7 @@
  */
 import { NS } from "@ns";
 import { getThreads, findHackPID, scanAllServers } from './helpers.js'
-import { createFlagAutocomplete, filterHackableServers } from "./helpersScriptInterface.js";
+import { createFlagAutocomplete, filterHackableServers } from '/lib/autocomplete.js'
 
 interface FlagsSchema {
     script: string

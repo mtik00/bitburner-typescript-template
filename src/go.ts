@@ -1,6 +1,6 @@
 import { NS } from "@ns";
-import { createFlagAutocomplete } from "./helpersScriptInterface";
-import { waitForPIDComplete } from "./helpersScriptInterface";
+import { createFlagAutocomplete } from "./lib/autocomplete";
+import { waitForPIDComplete } from "./lib/scripting";
 import { openServer, sortServers, scanAllServers, execHack } from "./helpers";
 
 const SINGULARITY = true

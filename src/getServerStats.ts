@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NS } from '@ns'
 import { scanAllServers } from './lib/scan'
-import { getArgValue } from './helpersScriptInterface.js'
+import { getArgValue } from './lib/autocomplete'
 
 
 function get_action(ns: NS, host: string) {

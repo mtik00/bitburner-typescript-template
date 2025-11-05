@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { NS, Server } from "@ns";
 import { getThreads } from './helpers.js'
-import { createFlagAutocomplete, filterHackableServers, RAM } from "./helpersScriptInterface.js";
+import { createFlagAutocomplete, filterHackableServers } from "./lib/autocomplete.js"
+import { RAM } from "./lib/const.js";
+
 /*
 This script used to replace a purchased server with a server with more RAM.
 

@@ -1,5 +1,6 @@
 import { NS, Server, ProcessInfo } from "@ns";
-import { getArgValue, HOME_RAM_KEEP } from "./helpersScriptInterface";
+import { getArgValue } from "./lib/autocomplete";
+import { HOME_RAM_KEEP } from "./lib/const";
 
 /**
  * 

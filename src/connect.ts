@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { connect } from "/lib/path";
-import { filterHackableServers } from "/helpersScriptInterface";
+import { filterHackableServers } from "./lib/autocomplete";
 
 export async function main(ns: NS): Promise<void> {
     const target = ns.args[0];

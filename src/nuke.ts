@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NS } from "@ns";
 import { openServer } from "./helpers";
-import { filterHackableServers } from "./helpersScriptInterface";
+import { filterHackableServers } from "./lib/autocomplete";
 
 const argsSchema = [
     ['target', ''],
