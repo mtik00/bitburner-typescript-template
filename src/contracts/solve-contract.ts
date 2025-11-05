@@ -80,9 +80,30 @@ export function solveContract(ns, host, filename, logLevel = 0) {
         case "Sanitize Parentheses in Expression":
             answer = sanitizeParentheses(ns, data);
             break;
+        case "Shortest Path in a Grid":
+            answer = solveShortestPathInGrid(ns, data)
+            break
         case "Square Root":
             answer = solveSquareRoot(ns, data)
             break;
+        case "Encryption I: Caesar Cipher":
+            answer = solveCaesarCipher(ns, data)
+            break
+        case "Encryption II: Vigenère Cipher":
+            answer = solveVigenereCipher(ns, data)
+            break
+        case "HammingCodes: Integer to Encoded Binary":
+            answer = HammingEncode(ns, data)
+            break
+        case "HammingCodes: Encoded Binary to Integer":
+            answer = HammingDecode(ns, data)
+            break
+        case "Minimum Path Sum in a Triangle":
+            answer = solveMinimumPathSumInTriangle(ns, data)
+            break
+        case "Total Number of Primes":
+            answer = solveTotalPrimesInRange(ns, data)
+            break
         default:
             ns.tprint("unknown type: " + type);
             return;
@@ -846,4 +867,277 @@ function solveSquareRoot(ns, data) {
     }
 
     return x;
+}
+
+function solveShortestPathInGrid(ns, data) {
+    const height = data.length;
+    const width = data[0].length;
+    const dstY = height - 1;
+    const dstX = width - 1;
+
+    // Check if start or end is blocked
+    if (data[0][0] === 1 || data[dstY][dstX] === 1) {
+        return "";
+    }
+
+    const distance = new Array(height);
+    const parent = new Array(height);
+    const queue = [];
+
+    for (let y = 0; y < height; y++) {
+        distance[y] = new Array(width).fill(Infinity);
+        parent[y] = new Array(width).fill(null);
+    }
+
+    function validPosition(y, x) {
+        return y >= 0 && y < height && x >= 0 && x < width && data[y][x] === 0;
+    }
+
+    // BFS to find shortest path
+    distance[0][0] = 0;
+    queue.push([0, 0]);
+
+    while (queue.length > 0) {
+        const [y, x] = queue.shift();
+
+        // Check all four directions: Up, Down, Left, Right
+        const directions = [
+            [-1, 0, 'U'], // Up
+            [1, 0, 'D'],  // Down
+            [0, -1, 'L'], // Left
+            [0, 1, 'R']   // Right
+        ];
+
+        for (const [dy, dx, dir] of directions) {
+            const newY = y + dy;
+            const newX = x + dx;
+
+            if (validPosition(newY, newX) && distance[newY][newX] === Infinity) {
+                queue.push([newY, newX]);
+                distance[newY][newX] = distance[y][x] + 1;
+                parent[newY][newX] = [y, x, dir];
+            }
+        }
+    }
+
+    // If destination is unreachable
+    if (!isFinite(distance[dstY][dstX])) {
+        return "";
+    }
+
+    // Reconstruct path from destination to start
+    const path = [];
+    let currentY = dstY;
+    let currentX = dstX;
+
+    while (parent[currentY][currentX] !== null) {
+        const [prevY, prevX, direction] = parent[currentY][currentX];
+        path.push(direction);
+        currentY = prevY;
+        currentX = prevX;
+    }
+
+    // Reverse path since we built it backwards
+    return path.reverse().join('');
+}
+
+function solveCaesarCipher(ns, data) {
+    const [plaintext, shift] = data;
+
+    // Build char array, shifting via map and join to final results
+    const cipher = [...plaintext]
+        .map((a) => (a === " " ? a : String.fromCharCode(((a.charCodeAt(0) - 65 - shift + 26) % 26) + 65)))
+        .join("");
+
+    return cipher;
+}
+
+function solveVigenereCipher(ns, data) {
+    const [plaintext, keyword] = data;
+
+    // Build char array, shifting via map using corresponding keyword letter and join to final results
+    const cipher = [...plaintext]
+        .map((a, i) => {
+            return a === " "
+                ? a
+                : String.fromCharCode(((a.charCodeAt(0) - 2 * 65 + keyword.charCodeAt(i % keyword.length)) % 26) + 65);
+        })
+        .join("");
+
+    return cipher;
+}
+
+function HammingEncode(ns: NS, data: number): string {
+    const enc: number[] = [0];
+    const data_bits: number[] = data
+        .toString(2)
+        .split("")
+        .reverse()
+        .map((value) => parseInt(value));
+
+    let k = data_bits.length;
+
+    /* NOTE: writing the data like this flips the endianness, this is what the
+     * original implementation by Hedrauta did so I'm keeping it like it was. */
+    for (let i = 1; k > 0; i++) {
+        if ((i & (i - 1)) != 0) {
+            enc[i] = data_bits[--k];
+        } else {
+            enc[i] = 0;
+        }
+    }
+
+    let parityNumber = 0;
+
+    /* Figure out the subsection parities */
+    for (let i = 0; i < enc.length; i++) {
+        if (enc[i]) {
+            parityNumber ^= i;
+        }
+    }
+
+    const parityArray = parityNumber
+        .toString(2)
+        .split("")
+        .reverse()
+        .map((value) => parseInt(value));
+
+    /* Set the parity bits accordingly */
+    for (let i = 0; i < parityArray.length; i++) {
+        enc[2 ** i] = parityArray[i] ? 1 : 0;
+    }
+
+    parityNumber = 0;
+    /* Figure out the overall parity for the entire block */
+    for (let i = 0; i < enc.length; i++) {
+        if (enc[i]) {
+            parityNumber++;
+        }
+    }
+
+    /* Finally set the overall parity bit */
+    enc[0] = parityNumber % 2 == 0 ? 0 : 1;
+
+    return enc.join("");
+}
+
+function HammingDecode(ns: NS, data: string): number {
+    let err = 0;
+    const bits: number[] = [];
+
+    /* TODO why not just work with an array of digits from the start? */
+    const bitStringArray = data.split("");
+    for (let i = 0; i < bitStringArray.length; ++i) {
+        const bit = parseInt(bitStringArray[i]);
+        bits[i] = bit;
+
+        if (bit) {
+            err ^= +i;
+        }
+    }
+
+    /* If err != 0 then it spells out the index of the bit that was flipped */
+    if (err) {
+        /* Flip to correct */
+        bits[err] = bits[err] ? 0 : 1;
+    }
+
+    /* Now we have to read the message, bit 0 is unused (it's the overall parity bit
+     * which we don't care about). Each bit at an index that is a power of 2 is
+     * a parity bit and not part of the actual message. */
+
+    let ans = "";
+
+    for (let i = 1; i < bits.length; i++) {
+        /* i is not a power of two so it's not a parity bit */
+        if ((i & (i - 1)) != 0) {
+            ans += bits[i];
+        }
+    }
+
+    /* TODO to avoid ambiguity about endianness why not let the player return the extracted (and corrected)
+     * data bits, rather than guessing at how to convert it to a decimal string? */
+    return parseInt(ans, 2);
+}
+
+function solveMinimumPathSumInTriangle(ns, data) {
+    const n = data.length;
+
+    // Start from the bottom row and work our way up
+    // dp[j] represents the minimum path sum from position j in current row to bottom
+    const dp = data[n - 1].slice();
+
+    // Process each row from second-to-last up to the top
+    for (let i = n - 2; i >= 0; i--) {
+        for (let j = 0; j < data[i].length; j++) {
+            // For each position, choose the minimum of the two adjacent positions below
+            dp[j] = Math.min(dp[j], dp[j + 1]) + data[i][j];
+        }
+    }
+
+    // The answer is at the top of the triangle
+    return dp[0];
+}
+
+function solveTotalPrimesInRange(ns, data) {
+    const [low, high] = data;
+
+    /** Simple implementation of Sieve of Eratosthenes
+     * https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes */
+    function simpleSieve(max) {
+        const primes = [];
+        // The array of numbers to check if they're prime is left blank. 
+        // Blank and resulting prime values are falsey, non-primes are marked truthy.
+        const arr = Array(max);
+        // We only need to check factors up to the square root of max
+        for (let i = 2; i * i <= max; i++) {
+            // and only the prime factors
+            if (!arr[i]) {
+                // and we can then mark off all subsequent multiples of that prime
+                for (let p = i * i; p <= max; p += i) {
+                    arr[p] = 1;
+                }
+            }
+        }
+        // It should be faster to loop over the array again than to check factors 
+        // all the way to max and mark primes at the same time.
+        for (let i = 2; i <= max; i++) {
+            if (!arr[i]) {
+                primes.push(i);
+            }
+        }
+        return primes;
+    }
+
+    /** Modified Sieve of Eratosthenes to find primes across a range, 
+     * rather than all primes below a value. */
+    function primeSieve(low, high) {
+        // 0 and 1 are not checked, so are removed here.
+        if (low < 2) {
+            low = 2;
+        }
+        let primes = 0;
+        // Only store the potential primes in the low to high range instead of 0 to high.
+        const arr = Array(high - low + 1);
+        // In order to mark off all composite numbers, we need to run up through sqrt(high), 
+        // since primes squares are the worst case.
+        const checks = simpleSieve(Math.ceil(Math.sqrt(high)));
+        for (const i of checks) {
+            // Same logic as for the simple sieve to mark off multiples of identified primes, 
+            // but we only start checking at the first multiple >= low.
+            const lim = Math.max(i, Math.ceil(low / i)) * i;
+            for (let j = lim; j <= high; j += i) {
+                arr[j - low] = 1;
+            }
+        }
+        for (let a = 0; a <= high - low; a++) {
+            if (!arr[a]) {
+                // We don't really care what the value of the prime is, just how many we find.
+                ++primes;
+            }
+        }
+        return primes;
+    }
+
+    return primeSieve(low, high);
 }
