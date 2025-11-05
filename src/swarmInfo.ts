@@ -1,5 +1,5 @@
-import { NS, ScriptArg, Server } from "@ns";
-import { getSwarm, SwarmServer } from "./helpers";
+import { NS, } from "@ns";
+import { getSwarm } from "./lib/swarm"
 
 function printTable<T extends Record<string, any>>(
     ns: NS,

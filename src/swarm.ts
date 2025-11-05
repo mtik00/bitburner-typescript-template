@@ -1,5 +1,7 @@
 import { NS } from "@ns";
-import { getSwarm, sortServers, scanAllServers } from "./helpers";
+import { sortServers } from "./helpers";
+import { getSwarm } from "./lib/swarm";
+import { scanAllServers } from "./lib/scan";
 
 
 export async function main(ns: NS) {

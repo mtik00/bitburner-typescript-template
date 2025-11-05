@@ -1,6 +1,8 @@
-import { NS, Server, ProcessInfo } from "@ns";
+import { NS, Server } from "@ns";
 import { getArgValue } from "./lib/autocomplete";
 import { HOME_RAM_KEEP } from "./lib/const";
+import { runApps } from "./lib/apps";
+import { findPath } from "./lib/path";
 
 /**
  * 
@@ -39,71 +41,6 @@ export function getThreads(
     // ns.tprintf("threads: %s; for host: %s", threads, server);
 
     return threads;
-}
-
-export function appCount(ns: NS): number {
-    let portCount = 0;
-    if (ns.fileExists("BruteSSH.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("FTPCrack.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("relaySMTP.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("HTTPWorm.exe")) {
-        portCount++;
-    }
-
-    if (ns.fileExists("SQLInject.exe")) {
-        portCount++;
-    }
-
-    return portCount;
-}
-
-/**
- * 
- * @param ns 
- * @param target The target server to run the apps
- * @returns integer: Numbe of apps ran
- */
-export function runApps(ns: NS, target: string): number {
-    if (target == "home") {
-        return 99;
-    }
-
-    let portCount = 0;
-    if (ns.fileExists("BruteSSH.exe")) {
-        ns.brutessh(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("FTPCrack.exe")) {
-        ns.ftpcrack(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("relaySMTP.exe")) {
-        ns.relaysmtp(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("HTTPWorm.exe")) {
-        ns.httpworm(target);
-        portCount++;
-    }
-
-    if (ns.fileExists("SQLInject.exe")) {
-        ns.sqlinject(target);
-        portCount++;
-    }
-
-    return portCount;
 }
 
 /**
@@ -244,37 +181,6 @@ export function sortServers(ns: NS, key: keyof Server, hostnames: string[], orde
     return sortedServers.map(server => server.hostname);
 }
 
-/** Helper to get a list of all hostnames on the network **/
-
-/**
- * 
- * @param ns 
- * @param all false: Only included rooted servers with money 
- * @returns string[] List of hostnames found
- */
-export function scanAllServers(ns: NS, all = true): string[] {
-    let returnHosts = [];
-    let discoveredHosts = []; // Hosts (a.k.a. servers) we have scanned
-    let hostsToScan = ["home"]; // Hosts we know about, but have no yet scanned
-    let infiniteLoopProtection = 9999; // In case you mess with this code, this should save you from getting stuck
-    while (hostsToScan.length > 0 && infiniteLoopProtection-- > 0) { // Loop until the list of hosts to scan is empty
-        let hostName = hostsToScan.pop(); // Get the next host to be scanned
-
-        if (typeof hostName !== "string") {
-            continue
-        }
-
-        discoveredHosts.push(hostName); // Mark this host as "scanned"
-        if (all || ns.hasRootAccess(hostName)) {
-            returnHosts.push(hostName);
-        }
-
-        for (const connectedHost of ns.scan(hostName)) // "scan" (list all hosts connected to this one)
-            if (!discoveredHosts.includes(connectedHost) && !hostsToScan.includes(connectedHost)) // If we haven't found this host
-                hostsToScan.push(connectedHost); // Add it to the queue of hosts to be scanned
-    }
-    return returnHosts; // The list of scanned hosts should now be the set of all hosts in the game!
-}
 
 /**
  * 
@@ -320,34 +226,6 @@ export function connectCommand(
     return connectString
 }
 
-export function findPath(
-    ns: NS,
-    target: string,
-    serverName: string,
-    serverList: string[],
-    ignore: string[],
-    isFound: boolean,
-): [string[], boolean] {
-    ignore.push(serverName);
-    let scanResults = ns.scan(serverName);
-    for (let server of scanResults) {
-        if (ignore.includes(server)) {
-            continue;
-        }
-        if (server === target) {
-            serverList.push(server);
-            return [serverList, true];
-        }
-        serverList.push(server);
-        [serverList, isFound] = findPath(ns, target, server, serverList, ignore, isFound);
-        if (isFound) {
-            return [serverList, isFound];
-        }
-        serverList.pop();
-    }
-    return [serverList, false];
-}
-
 export function findHackPID(ns: NS, hostServer: string, scriptMatch: RegExp = /.*hack.js/): number {
     const processes = ns.ps(hostServer)
     let hackPID = 0
@@ -368,94 +246,6 @@ export async function main(ns: NS) {
     ns.tprint(getThreads(ns, "v1-hack.js", "home"))
 }
 
-export class SwarmServer {
-    ns: NS
-    server: Server
-    procs: ProcessInfo[]
-
-    constructor(ns: NS, server: any) {
-        this.ns = ns
-        this.server = server
-        this.procs = ns.ps(server.hostname)
-    }
-
-    public get hostname(): string {
-        return this.server.hostname
-    }
-
-    public get maxRam(): number {
-        return this.server.maxRam
-    }
-
-    public get availableRam(): number {
-        return this.server.maxRam - this.server.ramUsed
-    }
-
-    public get ports_required(): number {
-        return this.server.numOpenPortsRequired || 99
-    }
-
-    public get ports_open(): number {
-        return this.server.openPortCount || 0
-    }
-
-    nuke() {
-        runApps(this.ns, this.hostname)
-        this.server = this.ns.getServer(this.hostname)
-    }
-
-    getThreads(
-        script: string,
-        homeRamAdjust = HOME_RAM_KEEP, // Keep some RAM available on "home"
-        maxRam = false,
-    ): number {
-        return getThreads(this.ns, script, this.hostname, homeRamAdjust, maxRam)
-    }
-
-    public get target(): string {
-        if (this.procs.length === 0) {
-            return ""
-        }
-
-        const t = getArgValue(this.procs[0].args, "--target")
-        if (t === undefined) {
-            return "?"
-        }
-
-        return t.toString()
-    }
-
-    public get hack(): string {
-        if (this.procs.length === 0) {
-            return ""
-        }
-
-        for (const proc of this.procs) {
-            if (proc.filename.includes("h")) {
-                return `${proc.filename}(${proc.threads})`
-            }
-        }
-        return "?"
-    }
-}
-
-/**
- * Returns a list of our swarm (servers of which we have root access.
- * 
- * @param ns NS
- * @returns SwarmServer[]
- */
-export function getSwarm(ns: NS): SwarmServer[] {
-    let servers: SwarmServer[] = []
-
-    scanAllServers(ns, false).forEach((hostname) => {
-        // There's no need to list servers with 0 RAM in our "swarm"
-        if (ns.getServerMaxRam(hostname) > 0)
-            servers.push(new SwarmServer(ns, ns.getServer(hostname)))
-    })
-
-    return servers.sort((a, b) => (a.server.hackDifficulty || 0) - (b.server.hackDifficulty || 0))
-}
 
 export function getProcessInfo(ns: NS, host: string): string {
     /*

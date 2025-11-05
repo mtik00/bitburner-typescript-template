@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { scanAllServers } from './helpers.js'
+import { scanAllServers } from "./lib/scan.js";
 
 // the purpose of cascade kill is to kill all scripts running on any server in the game
 // but saving the host that you run it on for last (so that it doesn't kill itself prematurely)

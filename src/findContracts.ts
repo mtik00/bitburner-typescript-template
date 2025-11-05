@@ -1,5 +1,6 @@
 import { NS } from "@ns";
-import { scanAllServers, connectCommand } from "./helpers";
+import { connectCommand } from "./helpers";
+import { scanAllServers } from "./lib/scan";
 
 export async function main(ns: NS): Promise<void> {
     let found = false

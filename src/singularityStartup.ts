@@ -1,7 +1,9 @@
 import { NS } from "@ns";
-import { openServer, sortServers, scanAllServers, appCount } from "./helpers";
+import { openServer, sortServers } from "./helpers";
 import { waitForPIDComplete } from "./lib/scripting";
 import { backdoorServers } from "./lib/const";
+import { scanAllServers } from "./lib/scan";
+import { appCount } from "./lib/apps";
 
 const programs = [
     "BruteSSH.exe",

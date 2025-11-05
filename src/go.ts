@@ -1,7 +1,8 @@
 import { NS } from "@ns";
 import { createFlagAutocomplete } from "./lib/autocomplete";
 import { waitForPIDComplete } from "./lib/scripting";
-import { openServer, sortServers, scanAllServers, execHack } from "./helpers";
+import { openServer, sortServers, execHack } from "./helpers";
+import { scanAllServers } from "./lib/scan";
 
 const SINGULARITY = true
 
