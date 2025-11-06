@@ -848,26 +848,40 @@ function Proper2ColoringOfAGraph(ns, data) {
 }
 
 function solveSquareRoot(ns, data) {
+    // Ensure data is a BigInt
+    if (typeof data !== 'bigint') {
+        data = BigInt(data);
+    }
+
     // Newton's method (Babylonian method) for finding square root
     // Formula: x_(n+1) = (x_n + S/x_n) / 2
     // where S is the number we want to find the square root of
 
-    if (data === 0n) return 0n;
-    if (data === 1n) return 1n;
+    if (data === 0n) return "0";
+    if (data === 1n) return "1";
 
-    // Initial guess: use bit length to get a rough estimate
-    // For a number with b bits, sqrt has approximately b/2 bits
     let x = data;
     let x1 = (x + 1n) / 2n; // Initial guess
 
-    // Newton's method iteration
+    // Newton's method iteration - converge to floor(sqrt(data))
     while (x1 < x) {
         x = x1;
         x1 = (x + data / x) / 2n;
     }
 
-    return x;
+    // x is now floor(sqrt(data))
+    // We need to round to nearest integer
+    // Check if (x+1)² is closer to data than x²
+    const lowerDiff = data - x * x;
+    const upperDiff = (x + 1n) * (x + 1n) - data;
+
+    if (upperDiff < lowerDiff) {
+        return (x + 1n).toString();
+    }
+
+    return x.toString();
 }
+
 
 function solveShortestPathInGrid(ns, data) {
     const height = data.length;
