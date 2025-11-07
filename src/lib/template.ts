@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { createFlagAutocomplete } from "./lib/autocomplete";
+import { createFlagAutocomplete } from "./autocomplete";
 
 /* Define the script interface ***********************************************/
 function help(ns: NS) {

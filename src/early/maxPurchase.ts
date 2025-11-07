@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { PURCHASED_SERVER_HOSTNAME } from "./lib/const";
+import { PURCHASED_SERVER_HOSTNAME } from "../lib/const";
 
 function upgradeCost(ns: NS, ram: number) {
     if (ns.getPurchasedServers().length > 0) {
