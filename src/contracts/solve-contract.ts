@@ -35,6 +35,9 @@ export function solveContract(ns, host, filename, logLevel = 0) {
         case "Total Ways to Sum":
             answer = totalWayToSum(ns, data);
             break;
+        case "Total Ways to Sum II":
+            answer = totalWayToSumII(ns, data);
+            break;
         case "Algorithmic Stock Trader I":
             answer = algorithmicStockTrader1(ns, data);
             break;
@@ -570,6 +573,20 @@ function totalWayToSum(ns, data) {
     var cache = {};
     var n = data;
     return twts(n, n, cache) - 1;
+}
+
+function totalWayToSumII(ns, data) {
+    const n = data[0];
+    const s = data[1];
+    const ways: number[] = [1];
+    ways.length = n + 1;
+    ways.fill(0, 1);
+    for (let i = 0; i < s.length; i++) {
+        for (let j = s[i]; j <= n; j++) {
+            ways[j] += ways[j - s[i]];
+        }
+    }
+    return ways[n]
 }
 
 function twts(limit, n, cache) {
