@@ -17,27 +17,6 @@ export function solveContract(ns, host, filename, logLevel = 0) {
     }
     var answer;
     switch (type) {
-        case "Minimum Path Sum in a Triangle":
-            answer = minPathSumInTriangle(ns, data);
-            break;
-        case "Find Largest Prime Factor":
-            answer = largestPrimeFactor(ns, data);
-            break;
-        case "Unique Paths in a Grid I":
-            answer = uniquePathInGrid1(ns, data);
-            break;
-        case "Unique Paths in a Grid II":
-            answer = uniquePathInGrid2(ns, data);
-            break;
-        case "Spiralize Matrix":
-            answer = spiralizeMatrix(ns, data);
-            break;
-        case "Total Ways to Sum":
-            answer = totalWayToSum(ns, data);
-            break;
-        case "Total Ways to Sum II":
-            answer = totalWayToSumII(ns, data);
-            break;
         case "Algorithmic Stock Trader I":
             answer = algorithmicStockTrader1(ns, data);
             break;
@@ -65,20 +44,35 @@ export function solveContract(ns, host, filename, logLevel = 0) {
         case "Compression III: LZ Compression":
             answer = comprLZEncode(ns, data)
             break;
-        case "Subarray with Maximum Sum":
-            answer = subarrayWithMaxSum(ns, data);
+        case "Encryption I: Caesar Cipher":
+            answer = solveCaesarCipher(ns, data)
+            break
+        case "Encryption II: Vigenère Cipher":
+            answer = solveVigenereCipher(ns, data)
+            break
+        case "Find All Valid Math Expressions":
+            answer = findAllValidMathExpr(ns, data);
+            break;
+        case "Find Largest Prime Factor":
+            answer = largestPrimeFactor(ns, data);
             break;
         case "Generate IP Addresses":
             answer = generateIpAddresses(ns, data);
             break;
+        case "HammingCodes: Encoded Binary to Integer":
+            answer = HammingDecode(ns, data)
+            break
+        case "HammingCodes: Integer to Encoded Binary":
+            answer = HammingEncode(ns, data)
+            break
         case "Merge Overlapping Intervals":
             answer = mergeOverlappingIntervals(ns, data);
             break;
+        case "Minimum Path Sum in a Triangle":
+            answer = solveMinimumPathSumInTriangle(ns, data)
+            break
         case "Proper 2-Coloring of a Graph":
             answer = Proper2ColoringOfAGraph(ns, data)
-            break;
-        case "Find All Valid Math Expressions":
-            answer = findAllValidMathExpr(ns, data);
             break;
         case "Sanitize Parentheses in Expression":
             answer = sanitizeParentheses(ns, data);
@@ -86,27 +80,30 @@ export function solveContract(ns, host, filename, logLevel = 0) {
         case "Shortest Path in a Grid":
             answer = solveShortestPathInGrid(ns, data)
             break
+        case "Spiralize Matrix":
+            answer = spiralizeMatrix(ns, data);
+            break;
         case "Square Root":
             answer = solveSquareRoot(ns, data)
             break;
-        case "Encryption I: Caesar Cipher":
-            answer = solveCaesarCipher(ns, data)
-            break
-        case "Encryption II: Vigenère Cipher":
-            answer = solveVigenereCipher(ns, data)
-            break
-        case "HammingCodes: Integer to Encoded Binary":
-            answer = HammingEncode(ns, data)
-            break
-        case "HammingCodes: Encoded Binary to Integer":
-            answer = HammingDecode(ns, data)
-            break
-        case "Minimum Path Sum in a Triangle":
-            answer = solveMinimumPathSumInTriangle(ns, data)
-            break
+        case "Subarray with Maximum Sum":
+            answer = subarrayWithMaxSum(ns, data);
+            break;
         case "Total Number of Primes":
             answer = solveTotalPrimesInRange(ns, data)
             break
+        case "Total Ways to Sum":
+            answer = totalWayToSum(ns, data);
+            break;
+        case "Total Ways to Sum II":
+            answer = totalWayToSumII(ns, data);
+            break;
+        case "Unique Paths in a Grid I":
+            answer = uniquePathInGrid1(ns, data);
+            break;
+        case "Unique Paths in a Grid II":
+            answer = uniquePathInGrid2(ns, data);
+            break;
         default:
             ns.tprint("unknown type: " + type);
             return;
