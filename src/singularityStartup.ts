@@ -133,24 +133,45 @@ async function backdoorNewServers(ns: NS) {
 }
 
 function upgradeHomeServer(ns: NS) {
-    // TODO: Figure out a good point to upgrade my home server
+    let currentRam = ns.getServerMaxRam("home")
+    const cost = ns.singularity.getUpgradeHomeRamCost()
+
+    if (ns.getPlayer().money > cost) {
+        ns.singularity.upgradeHomeRam()
+        currentRam = ns.getServerMaxRam("home")
+        ns.tprintf("home upgraded to %s", ns.formatRam(currentRam))
+    }
 }
 
 function upgradePurchasedServers(ns: NS) {
-    // TODO: Figure out a good point to upgrade my purchased servers
-    // const purchasedServers = ns.getPurchasedServers()
-    // const maxRam = Math.pow(2, 20)
+    const purchasedServers = ns.getPurchasedServers()
+    const maxRam = Math.pow(2, 20)
 
-    // let ram = 4
-    // let cost = ns.getPurchasedServerCost(ram)
-    // if (purchasedServers.length > 0) {
-    //     ram = ns.getServerMaxRam(PURCHASED_SERVER_HOSTNAME + "-01") * 2
-    //     cost = ns.getPurchasedServerUpgradeCost(PURCHASED_SERVER_HOSTNAME + "-01", ram)
-    // }
+    let ram = 8
+    let cost = ns.getPurchasedServerCost(ram) * 25
+    if (purchasedServers.length > 0) {
+        const thost = ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, 1)
+        ram = ns.getServerMaxRam(thost) * 4
+        cost = ns.getPurchasedServerUpgradeCost(thost, ram) * 25
+    }
 
-    // if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
-    //     return
-    // }
+    ns.print(`ram: ${ns.formatRam(ram)}; cost: ${ns.formatNumber(cost, 2)}`)
+    if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
+        return
+    }
+
+    const range = Array.from({ length: 25 }, (_, index) => 1 + index);
+
+    for (const index of range) {
+        const hostname = ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, index)
+        if (purchasedServers.includes(hostname)) {
+            ns.tprint(`upgraded ${hostname} to ${ns.formatRam(ram)}`)
+            ns.upgradePurchasedServer(hostname, ram)
+        } else {
+            ns.purchaseServer(hostname, ram)
+            ns.tprint(`purchased ${hostname} with ${ns.formatRam(ram)}`)
+        }
+    }
 }
 
 function purchaseTorRouter(ns: NS) {
@@ -178,8 +199,9 @@ export async function main(ns: NS): Promise<void> {
         await initialStudy(ns, 10)
     }
 
-    upgradeHomeServer(ns)
+    // Prioritize upgrading our purchased servers over home
     upgradePurchasedServers(ns)
+    upgradeHomeServer(ns)
 
     hackNewServers(ns)
     await backdoorNewServers(ns)
