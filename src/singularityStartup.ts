@@ -126,7 +126,7 @@ export async function main(ns: NS): Promise<void> {
         if (ns.getHackingLevel() < hackDifficulty) {
             ns.print(`can't hack ${hostname} yet.  Have ${player.skills.hacking}, need ${hackDifficulty}`)
             continue
-        } else if (numOpenPortsRequired < openPortCount) {
+        } else if (numOpenPortsRequired > openPortCount) {
             ns.print(`can't hack ${hostname} yet.  Have ${openPortCount} ports opened, need ${numOpenPortsRequired}`)
             continue
         }
