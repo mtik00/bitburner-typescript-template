@@ -1,6 +1,5 @@
-import { NS } from "@ns";
-
 export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
+export const MAXRAM = Math.pow(2, 20)
 export const HOME_RAM_KEEP = 32
 export const backdoorServers = new Set([
     "CSEC",
@@ -13,6 +12,7 @@ export const backdoorServers = new Set([
     "fulcrumtech",
     "fulcrumassets",
     "iron-gym",
+    "powerhouse-fitness",
 ]);
 
 export const HACK_PROGRAMS = [

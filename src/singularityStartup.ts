@@ -4,7 +4,7 @@ import { waitForPIDComplete } from "./lib/scripting";
 import { backdoorServers } from "./lib/const";
 import { scanAllServers } from "./lib/scan";
 import { appCount } from "./lib/apps";
-import { PROGRAMS } from "./lib/const";
+import { PROGRAMS, PURCHASED_SERVER_HOSTNAME, MAXRAM } from "./lib/const";
 
 
 function studyingCompSci(ns: NS): boolean {
@@ -17,6 +17,8 @@ function purchasePrograms(ns: NS) {
         return
     }
 
+    const money = ns.getPlayer().money
+
     // I currently don't care about Formulas.exe, and it's really expensive
     // early game.
     for (const program of PROGRAMS.filter(p => p !== "Formulas.exe")) {
@@ -26,7 +28,7 @@ function purchasePrograms(ns: NS) {
 
         const cost = ns.singularity.getDarkwebProgramCost(program)
 
-        if (cost <= ns.getPlayer().money) {
+        if (cost <= money) {
             const success = ns.singularity.purchaseProgram(program);
             if (!success) {
                 ns.tprint(`ERROR: Failed to purchase ${program}`)
@@ -39,29 +41,11 @@ function purchasePrograms(ns: NS) {
             break
         }
     }
-
 }
 
-export async function main(ns: NS): Promise<void> {
-    ns.disableLog("ALL")
-    // ns.ui.openTail()
-    ns.print("#### singularityStartup")
-
-    const player = ns.getPlayer()
-    const myMoney = player.money
-    if (!ns.hasTorRouter() && myMoney > 1000000) {
-        const success = ns.singularity.purchaseTor()
-        if (!success) {
-            ns.tprint(`ERROR: Failed to purchase TOR`)
-        } else {
-            ns.tprint(`Purchased TOR`)
-        }
-    }
-
-    ns.hasTorRouter() && purchasePrograms(ns)
-
+async function initialStudy(ns: NS, maxSkill = 10) {
     let initialStudy = false
-    while (ns.getPlayer().skills.hacking < 10) {
+    while (ns.getPlayer().skills.hacking < maxSkill) {
         initialStudy = true
         ns.print("studying Computer Science")
 
@@ -82,7 +66,9 @@ export async function main(ns: NS): Promise<void> {
         await ns.asleep(500)
         ns.singularity.universityCourse("Rothman University", "Computer Science", false)
     }
+}
 
+function hackNewServers(ns: NS) {
     // Look for new servers to hack
     // Make sure the target is open before we start to hack it.
     const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
@@ -107,6 +93,11 @@ export async function main(ns: NS): Promise<void> {
             }
         }
     }
+}
+
+async function backdoorNewServers(ns: NS) {
+    const player = ns.getPlayer()
+    const myAppCount = appCount(ns)
 
     for (const hostname of backdoorServers) {
         const server = ns.getServer(hostname)
@@ -121,13 +112,12 @@ export async function main(ns: NS): Promise<void> {
 
         const hackDifficulty = ns.getServerRequiredHackingLevel(hostname)
         const numOpenPortsRequired = server.numOpenPortsRequired !== undefined ? server.numOpenPortsRequired : 1E10
-        const openPortCount = server.openPortCount !== undefined ? server.openPortCount : 1E10
 
         if (ns.getHackingLevel() < hackDifficulty) {
             ns.print(`can't hack ${hostname} yet.  Have ${player.skills.hacking}, need ${hackDifficulty}`)
             continue
-        } else if (numOpenPortsRequired > openPortCount) {
-            ns.print(`can't hack ${hostname} yet.  Have ${openPortCount} ports opened, need ${numOpenPortsRequired}`)
+        } else if (numOpenPortsRequired > myAppCount) {
+            ns.print(`can't hack ${hostname} yet.  Only have ${myAppCount} ports I can open, need ${numOpenPortsRequired}`)
             continue
         }
 
@@ -140,6 +130,59 @@ export async function main(ns: NS): Promise<void> {
             ns.print(`...done with ${hostname}`)
         }
     }
+}
+
+function upgradeHomeServer(ns: NS) {
+    // TODO: Figure out a good point to upgrade my home server
+}
+
+function upgradePurchasedServers(ns: NS) {
+    // TODO: Figure out a good point to upgrade my purchased servers
+    // const purchasedServers = ns.getPurchasedServers()
+    // const maxRam = Math.pow(2, 20)
+
+    // let ram = 4
+    // let cost = ns.getPurchasedServerCost(ram)
+    // if (purchasedServers.length > 0) {
+    //     ram = ns.getServerMaxRam(PURCHASED_SERVER_HOSTNAME + "-01") * 2
+    //     cost = ns.getPurchasedServerUpgradeCost(PURCHASED_SERVER_HOSTNAME + "-01", ram)
+    // }
+
+    // if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
+    //     return
+    // }
+}
+
+function purchaseTorRouter(ns: NS) {
+    if (ns.getPlayer().money > 300000) {
+        const success = ns.singularity.purchaseTor()
+        if (!success) {
+            ns.tprint(`ERROR: Failed to purchase TOR`)
+        } else {
+            ns.tprint(`Purchased TOR`)
+        }
+    }
+}
+
+export async function main(ns: NS): Promise<void> {
+    ns.disableLog("ALL")
+    // ns.ui.openTail()
+    ns.print("#### singularityStartup")
+
+
+    !ns.hasTorRouter() && purchaseTorRouter(ns)
+    ns.hasTorRouter() && purchasePrograms(ns)
+
+    const player = ns.getPlayer()
+    if (player.skills.hacking < 10) {
+        await initialStudy(ns, 10)
+    }
+
+    upgradeHomeServer(ns)
+    upgradePurchasedServers(ns)
+
+    hackNewServers(ns)
+    await backdoorNewServers(ns)
 
     ns.print("...startup complete")
 }
