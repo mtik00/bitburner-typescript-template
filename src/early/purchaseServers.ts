@@ -1,8 +1,9 @@
 // @ts-nocheck
 import { NS } from "@ns";
-import { execHack } from '../helpers.js'
-import { createFlagAutocomplete, filterHackableServers } from "../lib/autocomplete.js";
-import { RAM, PURCHASED_SERVER_HOSTNAME } from "../lib/const.js";
+import { execHack } from '/helpers.js'
+import { createFlagAutocomplete, filterHackableServers } from "/lib/autocomplete.js";
+import { RAM, PURCHASED_SERVER_HOSTNAME } from "/lib/const.js";
+import { purchasedHostnameFromIndex } from "/lib/scripting.js";
 
 export async function main(ns: NS) {
     const options = ns.flags([
@@ -40,7 +41,7 @@ export async function main(ns: NS) {
             //  2. Copy our hacking script onto the newly-purchased server
             //  3. Run our hacking script on the newly-purchased server with 3 threads
             //  4. Increment our iterator to indicate that we've bought a new server
-            const svr_name = ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, i + 1)
+            const svr_name = purchasedHostnameFromIndex(ns, i + 1)
             const hostname = ns.purchaseServer(svr_name, ram)
 
             execHack(ns, target, hack_script, false, hostname);

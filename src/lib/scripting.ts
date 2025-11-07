@@ -1,4 +1,5 @@
 import { NS } from "@ns";
+import { PURCHASED_SERVER_HOSTNAME } from "./const";
 
 export async function waitForScriptComplete(ns: NS, filename: string, hostname: string = "home", sleep = 5000) {
     let idx = 0
@@ -36,3 +37,7 @@ export async function waitForPIDComplete(ns: NS, pid: number, hostname: string =
         }
     }
 }
+
+export function purchasedHostnameFromIndex(ns: NS, index: number): string {
+    return ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, 1)
+} 

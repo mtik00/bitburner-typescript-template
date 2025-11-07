@@ -1,9 +1,9 @@
 import { NS } from "@ns";
-import { PURCHASED_SERVER_HOSTNAME } from "../lib/const";
+import { purchasedHostnameFromIndex } from "/lib/scripting";
 
 function upgradeCost(ns: NS, ram: number) {
     if (ns.getPurchasedServers().length > 0) {
-        return ns.getPurchasedServerUpgradeCost(`${PURCHASED_SERVER_HOSTNAME}-001`, ram) * 25.0
+        return ns.getPurchasedServerUpgradeCost(purchasedHostnameFromIndex(ns, 1), ram) * 25.0
     } else {
         return ns.getPurchasedServerCost(ram) * 25.0
     }

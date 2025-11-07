@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { openServer, sortServers } from "./helpers";
-import { waitForPIDComplete } from "./lib/scripting";
+import { waitForPIDComplete, purchasedHostnameFromIndex } from "./lib/scripting";
 import { backdoorServers } from "./lib/const";
 import { scanAllServers } from "./lib/scan";
 import { appCount } from "./lib/apps";
@@ -143,6 +143,22 @@ function upgradeHomeServer(ns: NS) {
     }
 }
 
+function pservCost(ns: NS, ram: number, purchasedServers: string[]) {
+    const testHost = purchasedHostnameFromIndex(ns, 1)
+    if (purchasedServers.includes(testHost)) {
+        return ns.getPurchasedServerUpgradeCost(testHost, ram) * 25
+    }
+
+    return ns.getPurchasedServerCost(ram) * 25
+}
+
+/**
+ * This algorithm will purches/upgrade the maximum amount of RAM with at least
+ * 2 steps worth of upgrades.
+ * 
+ * @param ns 
+ * @returns 
+ */
 function upgradePurchasedServers(ns: NS) {
     const purchasedServers = ns.getPurchasedServers()
     const maxRam = Math.pow(2, 20)
@@ -150,7 +166,7 @@ function upgradePurchasedServers(ns: NS) {
     let ram = 8
     let cost = ns.getPurchasedServerCost(ram) * 25
     if (purchasedServers.length > 0) {
-        const thost = ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, 1)
+        const thost = purchasedHostnameFromIndex(ns, 1)
         ram = ns.getServerMaxRam(thost) * 4
         cost = ns.getPurchasedServerUpgradeCost(thost, ram) * 25
     }
@@ -160,10 +176,31 @@ function upgradePurchasedServers(ns: NS) {
         return
     }
 
+    // If we got here, we can afford at least 2 steps.  Keep trying the next
+    // steps to see if we can afford it.
+    let idx = 0
+    while (ram < MAXRAM && idx < 100) {
+        idx += 1
+
+        const testCost = pservCost(ns, ram * 2, purchasedServers)
+        if (testCost < ns.getPlayer().money) {
+            ram *= 2
+            cost = testCost
+        } else {
+            break
+        }
+    }
+
+    if (cost > ns.getPlayer().money) {
+        ns.tprintf("ERROR: Bad calculation in upgradePurchasedServers")
+        ns.tprintf("ERROR: ram: %s; cost %s", ns.formatRam(ram), ns.formatNumber(cost, 2))
+        return
+    }
+
     const range = Array.from({ length: 25 }, (_, index) => 1 + index);
 
     for (const index of range) {
-        const hostname = ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, index)
+        const hostname = purchasedHostnameFromIndex(ns, index)
         if (purchasedServers.includes(hostname)) {
             ns.tprint(`upgraded ${hostname} to ${ns.formatRam(ram)}`)
             ns.upgradePurchasedServer(hostname, ram)
