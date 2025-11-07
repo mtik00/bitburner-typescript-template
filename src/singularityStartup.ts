@@ -4,8 +4,13 @@ import { waitForPIDComplete, purchasedHostnameFromIndex } from "./lib/scripting"
 import { backdoorServers } from "./lib/const";
 import { scanAllServers } from "./lib/scan";
 import { appCount } from "./lib/apps";
-import { PROGRAMS, PURCHASED_SERVER_HOSTNAME, MAXRAM } from "./lib/const";
+import { PROGRAMS, MAXRAM } from "./lib/const";
 
+/**
+ * TODO:
+ * - Join factions?
+ * 
+ */
 
 function studyingCompSci(ns: NS): boolean {
     const currentWork = ns.singularity.getCurrentWork();
