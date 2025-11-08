@@ -33,3 +33,60 @@ export const PROGRAMS = [
 ]
 
 export const PURCHASED_SERVER_HOSTNAME = "pserv"
+
+export const EARLY_GAME_FACTIONS = [
+    "CyberSec",
+    "Tian Di Hui",
+    "Netburners",
+]
+
+export const CITY_FACTIONS = [
+    "Sector-12",
+    "Chongqing",
+    "New Tokyo",
+    "Ishima",
+    "Aevum",
+    "Volhaven"
+]
+
+export const HACKING_GROUP_FACTIONS = [
+    "NiteSec",
+    "The Black Hand",
+    "BitRunners",
+]
+
+export const MEGA_CORPORATION_FACTIONS = [
+    "ECorp",
+    "MegaCorp",
+    "KuaiGong International",
+    "Four Sigma",
+    "NWO",
+    "Blade Industries",
+    "OmniTek Incorporated",
+    "Bachman & Associates",
+    "Clarke Incorporated",
+    "Fulcrum Secret Technologies",
+]
+
+export const CRIMINAL_ORGANIZATION_FACTIONS = [
+    "Slum Snakes",
+    "Tetrads",
+    "Silhouette",
+    "Speakers for the Dead",
+    "The Dark Army",
+    "The Syndicate",
+]
+
+export const ENDGAME_FACTIONS = [
+    "The Covenant",
+    "Daedalus",
+    "Illuminati"
+]
+
+export const SAFE_FACTIONS = [
+    ...EARLY_GAME_FACTIONS,
+    ...HACKING_GROUP_FACTIONS,
+    ...MEGA_CORPORATION_FACTIONS,
+    ...CRIMINAL_ORGANIZATION_FACTIONS,
+    ...ENDGAME_FACTIONS,
+]

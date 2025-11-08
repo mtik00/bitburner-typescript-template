@@ -4,13 +4,25 @@ import { waitForPIDComplete, purchasedHostnameFromIndex } from "./lib/scripting"
 import { backdoorServers } from "./lib/const";
 import { scanAllServers } from "./lib/scan";
 import { appCount } from "./lib/apps";
-import { PROGRAMS, MAXRAM } from "./lib/const";
+import { PROGRAMS, MAXRAM, SAFE_FACTIONS } from "./lib/const";
 
 /**
  * TODO:
  * - Join factions?
- * 
+ * - Study compsci until 20, then Rob Store until?
  */
+
+/**
+ * Auto-accept invites from factions that are not at work
+ * @param ns 
+ */
+function acceptInvitations(ns: NS) {
+    for (const faction of ns.singularity.checkFactionInvitations()) {
+        if (SAFE_FACTIONS.includes(faction)) {
+            ns.singularity.joinFaction(faction)
+        }
+    }
+}
 
 function studyingCompSci(ns: NS): boolean {
     const currentWork = ns.singularity.getCurrentWork();
@@ -247,6 +259,7 @@ export async function main(ns: NS): Promise<void> {
 
     hackNewServers(ns)
     await backdoorNewServers(ns)
+    acceptInvitations(ns)
 
     ns.print("...startup complete")
 }
