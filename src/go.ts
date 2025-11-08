@@ -1,9 +1,11 @@
 import { NS } from "@ns";
-import { createFlagAutocomplete } from "./lib/autocomplete";
-import { waitForPIDComplete } from "./lib/scripting";
+import { createFlagAutocomplete } from "/lib/autocomplete";
+import { waitForPIDComplete } from "/lib/scripting";
 import { openServer, sortServers, execHack } from "./helpers";
-import { scanAllServers } from "./lib/scan";
-import { PURCHASED_SERVER_HOSTNAME } from "./lib/const";
+import { scanAllServers } from "/lib/scan";
+import { PURCHASED_SERVER_HOSTNAME } from "/lib/const";
+import { upgradePurchasedServers } from "/lib/purchasedServers";
+import { appCount } from "/lib/apps";
 
 const SINGULARITY = true
 
@@ -61,6 +63,33 @@ async function singularityStartup(ns: NS) {
   }
 }
 
+function hackNewServers(ns: NS) {
+  // Look for new servers to hack
+  // Make sure the target is open before we start to hack it.
+  const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
+  const myLevel = ns.getHackingLevel()
+  const myApps = appCount(ns)
+
+  for (const hostname of hostnames) {
+    const server = ns.getServer(hostname)
+    const openPortCount = server.openPortCount || 0
+    const numOpenPortsRequired = server.numOpenPortsRequired || 0
+    if (ns.getServerRequiredHackingLevel(hostname) > myLevel) {
+      break
+    } else if (server.hasAdminRights) {
+      continue
+    }
+
+    if (openPortCount < numOpenPortsRequired && numOpenPortsRequired <= myApps) {
+      // Only nuke it if we opened it
+      if (openServer(ns, hostname, undefined, true)) {
+        ns.nuke(hostname)
+        ns.print(`Acquired new server: ${hostname}`)
+      }
+    }
+  }
+}
+
 export async function main(ns: NS): Promise<void> {
   ns.disableLog("ALL")
   const options = ns.flags(argsSchema) as unknown as FlagsSchema
@@ -76,12 +105,18 @@ export async function main(ns: NS): Promise<void> {
   while (true) {
     SINGULARITY && await singularityStartup(ns)
 
+    upgradePurchasedServers(ns)
+
     // Make sure the target is open before we start to hack it.
     if (openServer(ns, options.target, undefined, true)) {
       ns.nuke(options.target)
     }
 
-    // Look for new servers
+    // Keep checking for new servers
+    hackNewServers(ns)
+
+    // Execute hack on new servers, or add to existing servers with free RAM
+    // (e.g. home and puchsed server upgrades)
     const hostnames = sortServers(ns, "requiredHackingSkill", scanAllServers(ns));
     for (const hostname of hostnames) {
       let target = options.target

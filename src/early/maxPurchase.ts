@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { purchasedHostnameFromIndex } from "/lib/scripting";
+import { purchasedHostnameFromIndex } from "/lib/purchasedServers";
 
 function upgradeCost(ns: NS, ram: number) {
     if (ns.getPurchasedServers().length > 0) {

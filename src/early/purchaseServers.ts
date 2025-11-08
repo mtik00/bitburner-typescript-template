@@ -3,7 +3,7 @@ import { NS } from "@ns";
 import { execHack } from '/helpers.js'
 import { createFlagAutocomplete, filterHackableServers } from "/lib/autocomplete.js";
 import { RAM, PURCHASED_SERVER_HOSTNAME } from "/lib/const.js";
-import { purchasedHostnameFromIndex } from "/lib/scripting.js";
+import { purchasedHostnameFromIndex } from "/lib/purchasedServers";
 
 export async function main(ns: NS) {
     const options = ns.flags([

@@ -1,14 +1,13 @@
 import { NS } from "@ns";
 import { openServer, sortServers } from "./helpers";
-import { waitForPIDComplete, purchasedHostnameFromIndex } from "./lib/scripting";
-import { backdoorServers } from "./lib/const";
-import { scanAllServers } from "./lib/scan";
-import { appCount } from "./lib/apps";
-import { PROGRAMS, MAXRAM, SAFE_FACTIONS } from "./lib/const";
-
+import { waitForPIDComplete } from "/lib/scripting";
+import { backdoorServers } from "/lib/const";
+import { scanAllServers } from "/lib/scan";
+import { appCount } from "/lib/apps";
+import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
+import { upgradePurchasedServers } from "/lib/purchasedServers";
 /**
  * TODO:
- * - Join factions?
  * - Study compsci until 20, then Rob Store until?
  */
 
@@ -113,6 +112,14 @@ function hackNewServers(ns: NS) {
 }
 
 async function backdoorNewServers(ns: NS) {
+
+    const needRAM = ns.getScriptRam("backdoor.js", "home")
+    const freeFram = ns.getServerMaxRam("home") - ns.getServerUsedRam("home")
+    if (needRAM > freeFram) {
+        ns.print("WARN: Not enough free RAM to run backdoor.js; run it manually with 'all'")
+        return
+    }
+
     const player = ns.getPlayer()
     const myAppCount = appCount(ns)
 
@@ -142,9 +149,14 @@ async function backdoorNewServers(ns: NS) {
             ns.nuke(hostname)
 
             ns.print(`running backdoor on ${hostname}`)
-            const pid = ns.exec("backdoor.js", "home", { preventDuplicates: true }, hostname)
-            await waitForPIDComplete(ns, pid, "home")
-            ns.print(`...done with ${hostname}`)
+            const pid = ns.exec("backdoor.js", "home", undefined, hostname)
+            if (pid === 0) {
+                ns.tprintf("WARN: Could not run backdoor.js on %s", hostname)
+            } else {
+                ns.tprintf("pid of backdoor script: %s", pid)
+                await waitForPIDComplete(ns, pid, "home")
+                ns.print(`...done with ${hostname}`)
+            }
         }
     }
 }
@@ -157,74 +169,6 @@ function upgradeHomeServer(ns: NS) {
         ns.singularity.upgradeHomeRam()
         currentRam = ns.getServerMaxRam("home")
         ns.tprintf("home upgraded to %s", ns.formatRam(currentRam))
-    }
-}
-
-function pservCost(ns: NS, ram: number, purchasedServers: string[]) {
-    const testHost = purchasedHostnameFromIndex(ns, 1)
-    if (purchasedServers.includes(testHost)) {
-        return ns.getPurchasedServerUpgradeCost(testHost, ram) * 25
-    }
-
-    return ns.getPurchasedServerCost(ram) * 25
-}
-
-/**
- * This algorithm will purches/upgrade the maximum amount of RAM with at least
- * 2 steps worth of upgrades.
- * 
- * @param ns 
- * @returns 
- */
-function upgradePurchasedServers(ns: NS) {
-    const purchasedServers = ns.getPurchasedServers()
-    const maxRam = Math.pow(2, 20)
-
-    let ram = 8
-    let cost = ns.getPurchasedServerCost(ram) * 25
-    if (purchasedServers.length > 0) {
-        const thost = purchasedHostnameFromIndex(ns, 1)
-        ram = ns.getServerMaxRam(thost) * 4
-        cost = ns.getPurchasedServerUpgradeCost(thost, ram) * 25
-    }
-
-    ns.print(`ram: ${ns.formatRam(ram)}; cost: ${ns.formatNumber(cost, 2)}`)
-    if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
-        return
-    }
-
-    // If we got here, we can afford at least 2 steps.  Keep trying the next
-    // steps to see if we can afford it.
-    let idx = 0
-    while (ram < MAXRAM && idx < 100) {
-        idx += 1
-
-        const testCost = pservCost(ns, ram * 2, purchasedServers)
-        if (testCost < ns.getPlayer().money) {
-            ram *= 2
-            cost = testCost
-        } else {
-            break
-        }
-    }
-
-    if (cost > ns.getPlayer().money) {
-        ns.tprintf("ERROR: Bad calculation in upgradePurchasedServers")
-        ns.tprintf("ERROR: ram: %s; cost %s", ns.formatRam(ram), ns.formatNumber(cost, 2))
-        return
-    }
-
-    const range = Array.from({ length: 25 }, (_, index) => 1 + index);
-
-    for (const index of range) {
-        const hostname = purchasedHostnameFromIndex(ns, index)
-        if (purchasedServers.includes(hostname)) {
-            ns.tprint(`upgraded ${hostname} to ${ns.formatRam(ram)}`)
-            ns.upgradePurchasedServer(hostname, ram)
-        } else {
-            ns.purchaseServer(hostname, ram)
-            ns.tprint(`purchased ${hostname} with ${ns.formatRam(ram)}`)
-        }
     }
 }
 
