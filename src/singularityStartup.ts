@@ -8,7 +8,6 @@ import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
 import { upgradePurchasedServers } from "/lib/purchasedServers";
 /**
  * TODO:
- * - Study compsci until 20, then Rob Store until?
  */
 
 /**
@@ -59,7 +58,7 @@ function purchasePrograms(ns: NS) {
     }
 }
 
-async function initialStudy(ns: NS, maxSkill = 10) {
+async function initialActions(ns: NS, maxSkill = 10) {
     let initialStudy = false
     while (ns.getPlayer().skills.hacking < maxSkill) {
         initialStudy = true
@@ -76,11 +75,11 @@ async function initialStudy(ns: NS, maxSkill = 10) {
         await ns.asleep(5000)
     }
 
-    // Keep studying, but put it in the background so it's obvious we're done.
+    // Switch to robbing a store after initial study
     if (initialStudy && studyingCompSci(ns)) {
         ns.singularity.stopAction()
         await ns.asleep(500)
-        ns.singularity.universityCourse("Rothman University", "Computer Science", false)
+        ns.singularity.commitCrime("Rob Store", false)
     }
 }
 
@@ -191,7 +190,7 @@ export async function main(ns: NS): Promise<void> {
 
     const player = ns.getPlayer()
     if (player.skills.hacking < 10) {
-        await initialStudy(ns, 10)
+        await initialActions(ns, 10)
     }
 
     // Prioritize upgrading our purchased servers over home
