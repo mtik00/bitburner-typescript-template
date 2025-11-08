@@ -3,7 +3,7 @@ export const DEBUG = false
 
 export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
 export const MAXRAM = Math.pow(2, 20)
-export const HOME_RAM_KEEP = 40 // Set this to `mem singularityStartup` + `mem backdoor.js`
+export const HOME_RAM_KEEP = 48 // Set this to `mem singularityStartup` + `mem backdoor.js`
 export const backdoorServers = new Set([
     "CSEC",
     "I.I.I.I",

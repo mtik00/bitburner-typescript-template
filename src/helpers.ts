@@ -29,7 +29,7 @@ export function getThreads(
         serverAvailableRam = ns.getServerMaxRam(server) - ns.getServerUsedRam(server)
     }
 
-    // Keep 8GB of RAM for home
+    // Keep some RAM for home
     if (server == "home") {
         serverAvailableRam -= homeRamAdjust
     }
