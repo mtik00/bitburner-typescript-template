@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { PURCHASED_SERVER_HOSTNAME, MAXRAM } from "/lib/const";
+import { PURCHASED_SERVER_HOSTNAME, MAXRAM, DEBUG } from "/lib/const";
 
 export function purchasedHostnameFromIndex(ns: NS, index: number): string {
     return ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, index)
@@ -45,7 +45,7 @@ export function upgradePurchasedServers(ns: NS) {
         cost = ns.getPurchasedServerUpgradeCost(thost, ram) * 25
     }
 
-    ns.print(`ram: ${ns.formatRam(ram)}; cost: ${ns.formatNumber(cost, 2)}`)
+    DEBUG && ns.print(`ram: ${ns.formatRam(ram)}; cost: ${ns.formatNumber(cost, 2)}`)
     if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
         return
     }
