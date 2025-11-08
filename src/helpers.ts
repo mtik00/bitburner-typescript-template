@@ -1,6 +1,6 @@
 import { NS, Server } from "@ns";
 import { getArgValue } from "./lib/autocomplete";
-import { HOME_RAM_KEEP, PURCHASED_SERVER_HOSTNAME } from "./lib/const";
+import { HOME_RAM_KEEP, PURCHASED_SERVER_HOSTNAME, DEBUG } from "./lib/const";
 import { runApps } from "./lib/apps";
 import { findPath } from "./lib/path";
 
@@ -32,13 +32,16 @@ export function getThreads(
     // Keep some RAM for home
     if (server == "home") {
         serverAvailableRam -= homeRamAdjust
+        DEBUG && ns.tprintf("Home available RAM reduced to %s", ns.formatRam(serverAvailableRam))
     }
 
     const threads = Math.floor(serverAvailableRam / scriptRam);
 
-    // ns.tprintf("scriptRam: %s", scriptRam);
-    // ns.tprintf("serverAvailableRam: %s", serverAvailableRam);
-    // ns.tprintf("threads: %s; for host: %s", threads, server);
+    if (DEBUG) {
+        ns.tprintf("scriptRam: %s", scriptRam);
+        ns.tprintf("serverAvailableRam: %s", serverAvailableRam);
+        ns.tprintf("threads: %s; for host: %s", threads, server);
+    }
 
     return threads;
 }
