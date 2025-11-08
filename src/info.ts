@@ -1,7 +1,8 @@
 import { NS } from "@ns";
-import { scanAllServers } from "./lib/scan";
-import { PURCHASED_SERVER_HOSTNAME } from "./lib/const";
-import { sortServers } from "./helpers";
+import { scanAllServers } from "/lib/scan";
+import { PURCHASED_SERVER_HOSTNAME } from "/lib/const";
+import { sortServers } from "/helpers";
+import { nextPservUpgrade } from "/lib/purchasedServers";
 
 function next_server(ns: NS) {
     // We need to get all hostnames since `scanAllServers` isn't sorted yet.
@@ -32,6 +33,7 @@ function next_server(ns: NS) {
 }
 
 export async function main(ns: NS): Promise<void> {
+    ns.tprint("\n\n")
     ns.tprint("************** Game Info ********************")
 
     // Next server to open
@@ -39,10 +41,18 @@ export async function main(ns: NS): Promise<void> {
     if (nextServer.hostname) {
         ns.tprintf("Next server to hack: %s @ %s", nextServer.hostname, nextServer.hackLevel)
     } else {
-        ns.tprint("...all servers hacked")
+        ns.tprint("🥳 All servers hacked")
     }
 
-    // Who's getting hacked, and how many threads
     // Next upgrade to purchased $$
+    const nextUpgrade = nextPservUpgrade(ns)
+    if (nextUpgrade.cost !== undefined) {
+        ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
+    } else {
+        ns.tprint("🥳 No more purchased server upgrades available")
+    }
+
     // Next upgrade to home $$
+
+    // Who's getting hacked, and how many threads
 }

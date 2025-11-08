@@ -26,6 +26,24 @@ export function pservCost(ns: NS, ram: number, purchasedServers: string[] = []):
     return ns.getPurchasedServerCost(ram) * 25
 }
 
+export function nextPservUpgrade(ns: NS) {
+    const hostname = ns.getPurchasedServers()[0]
+    const ram = ns.getServerMaxRam(hostname) * 4
+    const cost = ns.getPurchasedServerUpgradeCost(hostname, ram) * 25
+
+    if (ram > MAXRAM) {
+        return {
+            ram: undefined,
+            cost: undefined,
+        }
+    }
+
+    return {
+        ram: ram,
+        cost: cost,
+    }
+}
+
 
 /**
  * This algorithm will purches/upgrade the maximum amount of RAM with at least
