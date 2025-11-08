@@ -1,3 +1,4 @@
+// https://github.com/xxxsinx/bitburner/blob/main/dev.js
 /** @param {NS} ns */
 export async function main(ns) {
     const orig = React.createElement;
