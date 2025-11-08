@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { scanAllServers } from "/lib/scan";
-import { PURCHASED_SERVER_HOSTNAME } from "/lib/const";
+import { PURCHASED_SERVER_HOSTNAME, SINGULARITY } from "/lib/const";
 import { sortServers } from "/helpers";
 import { nextPservUpgrade } from "/lib/purchasedServers";
 
@@ -13,7 +13,7 @@ function next_server(ns: NS) {
         }
 
         const need = ns.getServerRequiredHackingLevel(hostname)
-        if (need > ns.getHackingLevel()) {
+        if (need >= ns.getHackingLevel() && !ns.hasRootAccess(hostname)) {
             hostnames.push(hostname)
         }
     }
@@ -53,6 +53,10 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Next upgrade to home $$
+    if (SINGULARITY) {
+        const homeCost = ns.singularity.getUpgradeHomeRamCost()
+        ns.tprintf("Next home RAM upgrade @ $%s", ns.formatNumber(homeCost, 2))
+    }
 
     // Who's getting hacked, and how many threads
 }
