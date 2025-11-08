@@ -9,11 +9,11 @@ export const backdoorServers = new Set([
     "I.I.I.I",
     "avmnite-02h",
     "run4theh111z",
-    "clarkinc",
     "nwo",
     "omnitek",
-    "fulcrumtech",
+    "clarkinc",
     "fulcrumassets",
+    "fulcrumtech",
     "iron-gym",
     "powerhouse-fitness",
 ]);
