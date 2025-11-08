@@ -1,8 +1,9 @@
-import { NS } from "@ns";
-import { scanAllServers } from "/lib/scan";
-import { PURCHASED_SERVER_HOSTNAME, SINGULARITY } from "/lib/const";
-import { sortServers } from "/helpers";
-import { nextPservUpgrade } from "/lib/purchasedServers";
+import { NS } from "@ns"
+import { scanAllServers } from "/lib/scan"
+import { PURCHASED_SERVER_HOSTNAME, SINGULARITY } from "/lib/const"
+import { sortServers } from "/helpers"
+import { nextPservUpgrade } from "/lib/purchasedServers"
+import { getSwarm } from "/lib/swarm"
 
 function next_server(ns: NS) {
     // We need to get all hostnames since `scanAllServers` isn't sorted yet.
@@ -32,6 +33,46 @@ function next_server(ns: NS) {
     }
 }
 
+interface HackStatus {
+    host: string
+    target: string
+    threads: number
+    script: string
+}
+
+interface HackTarget {
+    host: string
+    threads: number
+}
+
+function hackStatus(ns: NS): Map<string, HackTarget> {
+    let status: HackStatus[] = []
+    for (const server of getSwarm(ns)) {
+        status.push({
+            host: server.hostname,
+            target: server.target,
+            threads: server.targetThreads,
+            script: server.hackScript,
+        } as HackStatus)
+    }
+
+    // Summarize all of the stats.  We're only concerned with targets and number
+    // of threads.
+    let result = new Map<string, HackTarget>();
+    for (const item of status) {
+        let current = result.get(item.target)
+        if (current === undefined) {
+            result.set(item.target, { host: item.target, threads: item.threads } as HackTarget)
+        } else {
+            let currentThreads = current.threads || 0
+            currentThreads += item.threads
+            result.set(item.target, { host: item.target, threads: currentThreads } as HackTarget)
+        }
+    }
+
+    return result
+}
+
 export async function main(ns: NS): Promise<void> {
     ns.tprint("\n\n")
     ns.tprint("************** Game Info ********************")
@@ -59,4 +100,8 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Who's getting hacked, and how many threads
+    const status = hackStatus(ns)
+    status.forEach((value, key) => {
+        ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
+    })
 }

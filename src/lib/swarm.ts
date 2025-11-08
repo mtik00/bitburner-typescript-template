@@ -63,6 +63,34 @@ export class SwarmServer {
         return t.toString()
     }
 
+    public get hackScript(): string {
+        if (this.procs.length === 0) {
+            return ""
+        }
+
+        for (const proc of this.procs) {
+            if (proc.filename.includes("hack") || proc.filename.startsWith("h")) {
+                return proc.filename
+            }
+        }
+
+        return ""
+    }
+
+    public get targetThreads(): number {
+        if (this.procs.length === 0) {
+            return 0
+        }
+
+        for (const proc of this.procs) {
+            if (proc.filename.includes("hack") || proc.filename.startsWith("h")) {
+                return proc.threads
+            }
+        }
+
+        return 0
+    }
+
     public get hack(): string {
         if (this.procs.length === 0) {
             return ""
