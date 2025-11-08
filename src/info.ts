@@ -78,15 +78,15 @@ function hackStatus(ns: NS): Map<string, HackTarget> {
 }
 
 export async function main(ns: NS): Promise<void> {
-    ns.tprint("\n\n")
-    ns.tprint("************** Game Info ********************")
+    ns.tprintf("\n\n")
+    ns.tprintf("************** Game Info ********************")
 
     // Next server to open
     const nextServer = next_server(ns)
     if (nextServer.hostname) {
         ns.tprintf("Next server to hack: %s @ %s", nextServer.hostname, nextServer.hackLevel)
     } else {
-        ns.tprint("🥳 All servers hacked")
+        ns.tprintf("🥳 All servers hacked")
     }
 
     // Next upgrade to purchased $$
@@ -94,7 +94,7 @@ export async function main(ns: NS): Promise<void> {
     if (nextUpgrade.cost !== undefined) {
         ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
     } else {
-        ns.tprint("🥳 No more purchased server upgrades available")
+        ns.tprintf("🥳 No more purchased server upgrades available")
     }
 
     // Next upgrade to home $$
@@ -108,4 +108,6 @@ export async function main(ns: NS): Promise<void> {
     status.forEach((value, key) => {
         ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
     })
+    ns.tprintf("*********************************************")
+    ns.tprintf("\n\n")
 }
