@@ -39,5 +39,5 @@ export async function waitForPIDComplete(ns: NS, pid: number, hostname: string =
 }
 
 export function purchasedHostnameFromIndex(ns: NS, index: number): string {
-    return ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, 1) // TODO: fix; should be `index` not 1
+    return ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, index)
 } 
