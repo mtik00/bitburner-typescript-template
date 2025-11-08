@@ -1,6 +1,6 @@
 import { NS } from "@ns";
 import { openServer, sortServers } from "./helpers";
-import { waitForPIDComplete } from "/lib/scripting";
+import { waitForPIDComplete, enoughRAM } from "/lib/scripting";
 import { backdoorServers } from "/lib/const";
 import { scanAllServers } from "/lib/scan";
 import { appCount } from "/lib/apps";
@@ -112,10 +112,7 @@ function hackNewServers(ns: NS) {
 }
 
 async function backdoorNewServers(ns: NS) {
-
-    const needRAM = ns.getScriptRam("backdoor.js", "home")
-    const freeFram = ns.getServerMaxRam("home") - ns.getServerUsedRam("home")
-    if (needRAM > freeFram) {
+    if (!enoughRAM(ns, "backdoor.js")) {
         ns.print("WARN: Not enough free RAM to run backdoor.js; run it manually with 'all'")
         return
     }

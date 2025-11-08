@@ -1,5 +1,4 @@
 import { NS } from "@ns";
-import { PURCHASED_SERVER_HOSTNAME } from "./const";
 
 export async function waitForScriptComplete(ns: NS, filename: string, hostname: string = "home", sleep = 5000) {
     let idx = 0
@@ -36,4 +35,11 @@ export async function waitForPIDComplete(ns: NS, pid: number, hostname: string =
             }
         }
     }
+}
+
+
+export function enoughRAM(ns: NS, script: string, hostname: string = "home"): boolean {
+    return (
+        ns.getScriptRam(script, hostname) < (ns.getServerMaxRam(hostname) - ns.getServerUsedRam(hostname))
+    )
 }
