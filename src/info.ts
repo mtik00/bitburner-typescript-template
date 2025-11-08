@@ -60,6 +60,10 @@ function hackStatus(ns: NS): Map<string, HackTarget> {
     // of threads.
     let result = new Map<string, HackTarget>();
     for (const item of status) {
+        if (item.threads === 0) {
+            continue
+        }
+
         let current = result.get(item.target)
         if (current === undefined) {
             result.set(item.target, { host: item.target, threads: item.threads } as HackTarget)
