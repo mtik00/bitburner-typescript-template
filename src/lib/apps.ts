@@ -14,9 +14,10 @@ export function appCount(ns: NS): number {
  * 
  * @param ns 
  * @param target The target server to run the apps
+ * @param numberOfApps Limit the number of apps to run; optional
  * @returns integer: Numbe of apps ran
  */
-export function runApps(ns: NS, target: string): number {
+export function runApps(ns: NS, target: string, numberOfApps?: number): number {
     if (target == "home" || target.startsWith(PURCHASED_SERVER_HOSTNAME)) {
         return 99;
     }
@@ -29,11 +30,15 @@ export function runApps(ns: NS, target: string): number {
         { file: "SQLInject.exe", fn: ns.sqlinject }
     ];
 
-    return portPrograms.reduce((count, { file, fn }) => {
+    let count = 0;
+    for (const { file, fn } of portPrograms) {
+        if (numberOfApps !== undefined && count >= numberOfApps) {
+            break;
+        }
         if (ns.fileExists(file)) {
             fn.call(ns, target);
-            return count + 1;
+            count++;
         }
-        return count;
-    }, 0);
+    }
+    return count;
 }

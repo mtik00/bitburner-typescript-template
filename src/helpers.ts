@@ -60,8 +60,8 @@ export function openServer(ns: NS, target: string, force: boolean = false, quiet
     }
 
     // NOTE: You have to run the apps to open ports before you run NUKE.exe
-    const portCount = runApps(ns, target);
     const requiredPorts = ns.getServerNumPortsRequired(target);
+    const portCount = runApps(ns, target, requiredPorts);
 
     if ((requiredPorts > portCount) && !force) {
         !quiet && ns.tprintf("Not enough apps (%i) for: %s; need %i", portCount, target, requiredPorts);

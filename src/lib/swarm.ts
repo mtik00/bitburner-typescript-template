@@ -38,7 +38,7 @@ export class SwarmServer {
     }
 
     nuke() {
-        runApps(this.ns, this.hostname)
+        runApps(this.ns, this.hostname, this.server.numOpenPortsRequired || 99)
         this.server = this.ns.getServer(this.hostname)
     }
 
