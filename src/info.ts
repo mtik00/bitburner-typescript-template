@@ -137,6 +137,13 @@ export async function main(ns: NS): Promise<void> {
         ns.tprintf("Next utility program to purchase: %s", missingProgram)
     }
 
+    const augsNeeded = 31 - ns.singularity.getOwnedAugmentations().length
+    if (augsNeeded <= 0) {
+        ns.tprintf("🥳 You have enough augmentations to flee!")
+    } else {
+        ns.tprintf("You need %s more augmentations to flee", augsNeeded)
+    }
+
     ns.tprintf("*********************************************")
     ns.tprintf("\n\n")
 }
