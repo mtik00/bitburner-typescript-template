@@ -2,8 +2,9 @@ import { NS, Server, ProcessInfo } from "@ns";
 import { HOME_RAM_KEEP } from "./const";
 import { runApps } from "./apps";
 import { getThreads } from "/helpers";
-import { getArgValue } from "./autocomplete";
-import { scanAllServers } from "./scan";
+import { getArgValue } from "/lib/autocomplete";
+import { scanAllServers } from "/lib/scan";
+import { isAHackingProcess } from "/lib/scripting";
 
 
 export class SwarmServer {
@@ -69,7 +70,7 @@ export class SwarmServer {
         }
 
         for (const proc of this.procs) {
-            if (proc.filename.includes("hack") || proc.filename.startsWith("h")) {
+            if (isAHackingProcess(proc)) {
                 return proc.filename
             }
         }
@@ -88,7 +89,7 @@ export class SwarmServer {
 
         let threads = 0
         for (const proc of this.procs) {
-            if (proc.filename.includes("hack") || proc.filename.startsWith("h")) {
+            if (isAHackingProcess(proc)) {
                 threads += proc.threads
             }
         }
@@ -102,7 +103,7 @@ export class SwarmServer {
         }
 
         for (const proc of this.procs) {
-            if (proc.filename.includes("h")) {
+            if (isAHackingProcess(proc)) {
                 return `${proc.filename}(${proc.threads})`
             }
         }
