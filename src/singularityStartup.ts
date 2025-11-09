@@ -8,6 +8,7 @@ import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
 import { upgradePurchasedServers } from "/lib/purchasedServers";
 /**
  * TODO:
+ * - factions / augmentations
  */
 
 /**
@@ -32,8 +33,6 @@ function purchasePrograms(ns: NS) {
         return
     }
 
-    const money = ns.getPlayer().money
-
     // I currently don't care about Formulas.exe, and it's really expensive
     // early game.
     for (const program of PROGRAMS.filter(p => p !== "Formulas.exe")) {
@@ -42,6 +41,7 @@ function purchasePrograms(ns: NS) {
         }
 
         const cost = ns.singularity.getDarkwebProgramCost(program)
+        const money = ns.getPlayer().money
 
         if (cost <= money) {
             const success = ns.singularity.purchaseProgram(program);
