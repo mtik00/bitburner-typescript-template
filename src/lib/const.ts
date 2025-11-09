@@ -29,13 +29,18 @@ export const HACK_PROGRAMS = [
     "SQLInject.exe",
 ]
 
-export const PROGRAMS = [
-    ...HACK_PROGRAMS,
+export const UTILITY_PROGRAMS = [
     "ServerProfiler.exe",
     "DeepscanV1.exe",
     "DeepscanV2.exe",
     "AutoLink.exe",
     "Formulas.exe",
+
+]
+
+export const PROGRAMS = [
+    ...HACK_PROGRAMS,
+    ...UTILITY_PROGRAMS,
 ]
 
 export const PURCHASED_SERVER_HOSTNAME = "pserv"
@@ -95,4 +100,11 @@ export const SAFE_FACTIONS = [
     ...MEGA_CORPORATION_FACTIONS,
     ...CRIMINAL_ORGANIZATION_FACTIONS,
     ...ENDGAME_FACTIONS,
+]
+
+export const AUGMENTS = [
+    {
+        faction: "Aevum",
+        augment: "PCMatrix"
+    }
 ]

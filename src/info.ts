@@ -1,6 +1,6 @@
 import { NS } from "@ns"
 import { scanAllServers } from "/lib/scan"
-import { PURCHASED_SERVER_HOSTNAME, SINGULARITY } from "/lib/const"
+import { PURCHASED_SERVER_HOSTNAME, SINGULARITY, HACK_PROGRAMS, UTILITY_PROGRAMS } from "/lib/const"
 import { sortServers } from "/helpers"
 import { nextPservUpgrade } from "/lib/purchasedServers"
 import { getSwarm } from "/lib/swarm"
@@ -86,7 +86,7 @@ export async function main(ns: NS): Promise<void> {
     if (nextServer.hostname) {
         ns.tprintf("Next server to hack: %s @ %s", nextServer.hostname, nextServer.hackLevel)
     } else {
-        ns.tprintf("🥳 All servers hacked")
+        ns.tprintf("🥳 All servers hacked!")
     }
 
     // Next upgrade to purchased $$
@@ -94,7 +94,7 @@ export async function main(ns: NS): Promise<void> {
     if (nextUpgrade.cost !== undefined) {
         ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
     } else {
-        ns.tprintf("🥳 No more purchased server upgrades available")
+        ns.tprintf("🥳 No more purchased server upgrades available!")
     }
 
     // Next upgrade to home $$
@@ -108,6 +108,35 @@ export async function main(ns: NS): Promise<void> {
     status.forEach((value, key) => {
         ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
     })
+
+    // What's the next hack program we need to purchase
+    let missingProgram
+    for (const program of HACK_PROGRAMS) {
+        if (!ns.fileExists(program)) {
+            missingProgram = program
+            break
+        }
+    }
+    if (missingProgram === undefined) {
+        ns.tprintf("🥳 No more programs to purchase!")
+    } else {
+        ns.tprintf("Next hack program to purchase: %s (brings ports to %i)", missingProgram, HACK_PROGRAMS.indexOf(missingProgram) + 1)
+    }
+
+    // What's the next utility program we need to purchase
+    missingProgram = undefined
+    for (const program of UTILITY_PROGRAMS.filter(p => p !== "Formulas.exe")) {
+        if (!ns.fileExists(program)) {
+            missingProgram = program
+            break
+        }
+    }
+    if (missingProgram === undefined) {
+        ns.tprintf("🥳 No more utility programs to purchase!")
+    } else {
+        ns.tprintf("Next utility program to purchase: %s", missingProgram)
+    }
+
     ns.tprintf("*********************************************")
     ns.tprintf("\n\n")
 }
