@@ -77,18 +77,23 @@ export class SwarmServer {
         return ""
     }
 
+    // This isn't quite right, but I need a larger refactor to account for
+    // multiple targets/scripts/etc.
+    // I'm currently assuming that this server will only target a single host,
+    // with a single script, and there might be multiple processes.
     public get targetThreads(): number {
         if (this.procs.length === 0) {
             return 0
         }
 
+        let threads = 0
         for (const proc of this.procs) {
             if (proc.filename.includes("hack") || proc.filename.startsWith("h")) {
-                return proc.threads
+                threads += proc.threads
             }
         }
 
-        return 0
+        return threads
     }
 
     public get hack(): string {
