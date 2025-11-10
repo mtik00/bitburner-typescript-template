@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { openServer, sortServers } from "./helpers";
 import { waitForPIDComplete, enoughRAM } from "/lib/scripting";
-import { backdoorServers } from "/lib/const";
+import { backdoorServers, MAX_HOME_RAM } from "/lib/const";
 import { scanAllServers } from "/lib/scan";
 import { appCount } from "/lib/apps";
 import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
@@ -149,7 +149,6 @@ async function backdoorNewServers(ns: NS) {
             if (pid === 0) {
                 ns.tprintf("WARN: Could not run backdoor.js on %s", hostname)
             } else {
-                ns.tprintf("pid of backdoor script: %s", pid)
                 await waitForPIDComplete(ns, pid, "home")
                 ns.print(`...done with ${hostname}`)
             }
@@ -159,9 +158,14 @@ async function backdoorNewServers(ns: NS) {
 
 function upgradeHomeServer(ns: NS) {
     let currentRam = ns.getServerMaxRam("home")
-    const cost = ns.singularity.getUpgradeHomeRamCost()
+    if (MAX_HOME_RAM !== undefined && currentRam >= MAX_HOME_RAM) {
+        return
+    }
 
-    if (ns.getPlayer().money > cost) {
+    const cost = ns.singularity.getUpgradeHomeRamCost()
+    if (cost === Infinity || cost === undefined) {
+        return
+    } else if (ns.getPlayer().money > cost) {
         ns.singularity.upgradeHomeRam()
         currentRam = ns.getServerMaxRam("home")
         ns.tprintf("home upgraded to %s", ns.formatRam(currentRam))

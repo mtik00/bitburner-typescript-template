@@ -1,5 +1,6 @@
 import { NS } from "@ns";
 import { purchasedHostnameFromIndex } from "/lib/purchasedServers";
+import { MAXRAM } from "/lib/const";
 
 function upgradeCost(ns: NS, ram: number) {
     if (ns.getPurchasedServers().length > 0) {
@@ -16,7 +17,6 @@ export async function main(ns: NS): Promise<void> {
     const debug = Boolean(args.debug)
     const myMoney = ns.getServerMoneyAvailable("home")
 
-    const maxRam = Math.pow(2, 20) // 1048576
     const purchasedServers = ns.getPurchasedServers()
     let startingRam = 0
 
@@ -24,14 +24,14 @@ export async function main(ns: NS): Promise<void> {
         startingRam = ns.getServerMaxRam(purchasedServers[0])
     }
 
-    debug && ns.tprintf("Maximum RAM available: %s", ns.formatRam(maxRam))
+    debug && ns.tprintf("Maximum RAM available: %s", ns.formatRam(MAXRAM))
 
     var ram = 2
 
     let index = 0
     let numCantAfford = 0
 
-    while (ram < maxRam) {
+    while (ram < MAXRAM) {
         ram *= 2
         index += 1
         if (index > 30) {

@@ -4,8 +4,14 @@ export const DEBUG = false
 // Disable this if you cannot use singularity functions
 export const SINGULARITY = true
 
-export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576]
-export const MAXRAM = Math.pow(2, 20)
+// Only upgrade home RAM to this.  Set this to undefined to continuously grow.
+export const MAX_HOME_RAM = 32768
+
+// I don't think the purchased server RAM max is 2^20 (1PB)
+// ns.getPurchasedServerUpgradeCost() returns Infinte in that scenario.
+export const RAM = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288] //, 1048576]
+export const MAXRAM = Math.pow(2, 19) // TODO: Why isn't this 2^20?  The upgrade is Infinite
+
 export const HOME_RAM_KEEP = 48 // Set this to `mem singularityStartup` + `mem backdoor.js`
 export const backdoorServers = new Set([
     "CSEC",

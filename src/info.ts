@@ -1,6 +1,6 @@
 import { NS } from "@ns"
 import { scanAllServers } from "/lib/scan"
-import { PURCHASED_SERVER_HOSTNAME, SINGULARITY, HACK_PROGRAMS, UTILITY_PROGRAMS } from "/lib/const"
+import { PURCHASED_SERVER_HOSTNAME, SINGULARITY, HACK_PROGRAMS, UTILITY_PROGRAMS, MAX_HOME_RAM } from "/lib/const"
 import { sortServers } from "/helpers"
 import { nextPservUpgrade } from "/lib/purchasedServers"
 import { getSwarm } from "/lib/swarm"
@@ -99,15 +99,13 @@ export async function main(ns: NS): Promise<void> {
 
     // Next upgrade to home $$
     if (SINGULARITY) {
-        const homeCost = ns.singularity.getUpgradeHomeRamCost()
-        ns.tprintf("Next home RAM upgrade @ $%s", ns.formatNumber(homeCost, 2))
+        if (MAX_HOME_RAM !== undefined && ns.getServerMaxRam("home") < MAX_HOME_RAM) {
+            const homeCost = ns.singularity.getUpgradeHomeRamCost()
+            ns.tprintf("Next home RAM upgrade @ $%s", ns.formatNumber(homeCost, 2))
+        } else {
+            ns.tprintf("🥳 Home RAM already at %s!", ns.formatRam(MAX_HOME_RAM))
+        }
     }
-
-    // Who's getting hacked, and how many threads
-    const status = hackStatus(ns)
-    status.forEach((value, key) => {
-        ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
-    })
 
     // What's the next hack program we need to purchase
     let missingProgram
@@ -143,6 +141,12 @@ export async function main(ns: NS): Promise<void> {
     } else {
         ns.tprintf("You need %s more augmentations to flee", augsNeeded)
     }
+
+    // Who's getting hacked, and how many threads
+    const status = hackStatus(ns)
+    status.forEach((value, key) => {
+        ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
+    })
 
     ns.tprintf("*********************************************")
     ns.tprintf("\n\n")

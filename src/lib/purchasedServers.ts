@@ -26,7 +26,7 @@ export function pservCost(ns: NS, ram: number, purchasedServers: string[] = []):
     return ns.getPurchasedServerCost(ram) * 25
 }
 
-export function nextPservUpgrade(ns: NS) {
+export function nextPservUpgrade(ns: NS, jump: number = 4) {
     const hostname = ns.getPurchasedServers()[0]
     if (!hostname) {
         return {
@@ -35,7 +35,18 @@ export function nextPservUpgrade(ns: NS) {
         }
     }
 
-    const ram = ns.getServerMaxRam(hostname) * 4
+    const currentRam = ns.getServerMaxRam(hostname)
+    if (currentRam === MAXRAM) {
+        return {
+            ram: undefined,
+            cost: undefined,
+        }
+    }
+
+    // Make sure we can still jump to MAXRAM
+    const newRam = currentRam * jump
+    const ram = newRam <= MAXRAM ? newRam : MAXRAM
+
     const cost = ns.getPurchasedServerUpgradeCost(hostname, ram) * 25
 
     if (ram > MAXRAM) {
