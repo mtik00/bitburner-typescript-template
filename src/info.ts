@@ -4,7 +4,7 @@ import { PURCHASED_SERVER_HOSTNAME, SINGULARITY, HACK_PROGRAMS, UTILITY_PROGRAMS
 import { sortServers } from "/helpers"
 import { nextPservUpgrade } from "/lib/purchasedServers"
 import { getSwarm } from "/lib/swarm"
-import { loadConfig, UpgradeConfig } from "/lib/config"
+import { getUpgradeConfig } from "/lib/config"
 
 function next_server(ns: NS) {
     // We need to get all hostnames since `scanAllServers` isn't sorted yet.
@@ -79,10 +79,7 @@ function hackStatus(ns: NS): Map<string, HackTarget> {
 }
 
 export async function main(ns: NS): Promise<void> {
-    const upgradeConfig = loadConfig<UpgradeConfig>(ns, "upgrade-config.json", {
-        upgradeHome: true,
-        upgradePurchased: true,
-    });
+    const upgradeConfig = getUpgradeConfig(ns)
 
 
     ns.tprintf("\n\n")

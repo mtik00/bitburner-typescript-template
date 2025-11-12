@@ -5,6 +5,13 @@ export interface UpgradeConfig {
     upgradePurchased?: boolean;
 }
 
+export function getUpgradeConfig(ns: NS): UpgradeConfig {
+    return loadConfig<UpgradeConfig>(ns, "/lib/upgrade-config.txt", {
+        upgradeHome: true,
+        upgradePurchased: true,
+    });
+}
+
 export function loadConfig<T>(ns: NS, filename: string, defaults: T): T {
     if (!ns.fileExists(filename)) {
         ns.print(`WARN: Config file ${filename} not found, using defaults`);

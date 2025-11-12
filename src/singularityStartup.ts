@@ -6,7 +6,7 @@ import { scanAllServers } from "/lib/scan";
 import { appCount } from "/lib/apps";
 import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
 import { upgradePurchasedServers } from "/lib/purchasedServers";
-import { loadConfig, UpgradeConfig } from "/lib/config";
+import { getUpgradeConfig } from "/lib/config";
 
 /**
  * TODO:
@@ -190,10 +190,7 @@ export async function main(ns: NS): Promise<void> {
     // ns.ui.openTail()
     ns.print("#### singularityStartup")
 
-    const upgradeConfig = loadConfig<UpgradeConfig>(ns, "upgrade-config.json", {
-        upgradeHome: true,
-        upgradePurchased: true,
-    });
+    const upgradeConfig = getUpgradeConfig(ns)
 
     !ns.hasTorRouter() && purchaseTorRouter(ns)
     ns.hasTorRouter() && purchasePrograms(ns)
