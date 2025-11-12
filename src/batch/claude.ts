@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { waitForPIDComplete } from "./lib/scripting";
+import { waitForPIDComplete } from "/lib/scripting";
 
 interface Target {
     hostname: string;
