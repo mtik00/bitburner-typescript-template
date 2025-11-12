@@ -26,7 +26,7 @@ interface FlagsSchema {
 
 const argsSchema: [string, string | number | boolean | string[]][] = [
   ['target', 'joesguns'],
-  ['ptarget', 'n00dles'],
+  ['ptarget', ''],
   ['script', 'v1-hack.js'],
   ['help', false],
 ]
@@ -101,6 +101,8 @@ export async function main(ns: NS): Promise<void> {
     return
   }
 
+  const ptarget = options.ptarget !== "" ? options.ptarget : options.target
+
   while (true) {
     SINGULARITY && await singularityStartup(ns)
 
@@ -118,7 +120,7 @@ export async function main(ns: NS): Promise<void> {
     for (const hostname of hostnames) {
       let target = options.target
       if (hostname.startsWith(PURCHASED_SERVER_HOSTNAME)) {
-        target = options.ptarget
+        target = ptarget
       }
 
       execHack(ns, target, options.script, false, hostname, undefined, undefined, true);
