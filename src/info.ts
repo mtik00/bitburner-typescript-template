@@ -126,7 +126,12 @@ export async function main(ns: NS): Promise<void> {
     if (missingProgram === undefined) {
         ns.tprintf("🥳 No more programs to purchase!")
     } else {
-        ns.tprintf("Next hack program to purchase: %s (brings ports to %i)", missingProgram, HACK_PROGRAMS.indexOf(missingProgram) + 1)
+        ns.tprintf(
+            "Next hack program to purchase: %s @ $%s (brings ports to %i)",
+            missingProgram,
+            ns.formatNumber(ns.singularity.getDarkwebProgramCost(missingProgram)),
+            HACK_PROGRAMS.indexOf(missingProgram) + 1
+        )
     }
 
     // What's the next utility program we need to purchase
@@ -140,7 +145,11 @@ export async function main(ns: NS): Promise<void> {
     if (missingProgram === undefined) {
         ns.tprintf("🥳 No more utility programs to purchase!")
     } else {
-        ns.tprintf("Next utility program to purchase: %s", missingProgram)
+        ns.tprintf(
+            "Next utility program to purchase (after hack programs): %s at $%s",
+            missingProgram,
+            ns.formatNumber(ns.singularity.getDarkwebProgramCost(missingProgram))
+        )
     }
 
     const augsNeeded = 31 - ns.singularity.getOwnedAugmentations().length
