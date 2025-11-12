@@ -5,7 +5,7 @@ export const DEBUG = false
 export const SINGULARITY = true
 
 // Only upgrade home RAM to this.  Set this to undefined to continuously grow.
-export const MAX_HOME_RAM = 32768
+export const MAX_HOME_RAM = 512
 
 // I don't think the purchased server RAM max is 2^20 (1PB)
 // ns.getPurchasedServerUpgradeCost() returns Infinte in that scenario.
