@@ -4,6 +4,7 @@ import { PURCHASED_SERVER_HOSTNAME, SINGULARITY, HACK_PROGRAMS, UTILITY_PROGRAMS
 import { sortServers } from "/helpers"
 import { nextPservUpgrade } from "/lib/purchasedServers"
 import { getSwarm } from "/lib/swarm"
+import { loadConfig, UpgradeConfig } from "/lib/config"
 
 function next_server(ns: NS) {
     // We need to get all hostnames since `scanAllServers` isn't sorted yet.
@@ -78,6 +79,12 @@ function hackStatus(ns: NS): Map<string, HackTarget> {
 }
 
 export async function main(ns: NS): Promise<void> {
+    const upgradeConfig = loadConfig<UpgradeConfig>(ns, "upgrade-config.json", {
+        upgradeHome: true,
+        upgradePurchased: true,
+    });
+
+
     ns.tprintf("\n\n")
     ns.tprintf("************** Game Info ********************")
 
@@ -91,7 +98,9 @@ export async function main(ns: NS): Promise<void> {
 
     // Next upgrade to purchased $$
     const nextUpgrade = nextPservUpgrade(ns)
-    if (nextUpgrade.cost !== undefined) {
+    if (!upgradeConfig.upgradePurchased) {
+        ns.tprintf("WARN: purchased server upgrades are disabled")
+    } else if (nextUpgrade.cost !== undefined) {
         ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
     } else {
         ns.tprintf("🥳 No more purchased server upgrades available!")
@@ -99,7 +108,9 @@ export async function main(ns: NS): Promise<void> {
 
     // Next upgrade to home $$
     if (SINGULARITY) {
-        if (MAX_HOME_RAM !== undefined && ns.getServerMaxRam("home") < MAX_HOME_RAM) {
+        if (!upgradeConfig.upgradeHome) {
+            ns.tprintf("WARN: home server upgrades are disabled")
+        } else if (MAX_HOME_RAM !== undefined && ns.getServerMaxRam("home") < MAX_HOME_RAM) {
             const homeCost = ns.singularity.getUpgradeHomeRamCost()
             ns.tprintf("Next home RAM upgrade @ $%s", ns.formatNumber(homeCost, 2))
         } else {
@@ -141,6 +152,8 @@ export async function main(ns: NS): Promise<void> {
     } else {
         ns.tprintf("You need %s more augmentations to flee", augsNeeded)
     }
+
+    const f = ns.singularity.workForFaction
 
     // Who's getting hacked, and how many threads
     const status = hackStatus(ns)

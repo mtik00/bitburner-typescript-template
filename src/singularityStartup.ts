@@ -6,6 +6,8 @@ import { scanAllServers } from "/lib/scan";
 import { appCount } from "/lib/apps";
 import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
 import { upgradePurchasedServers } from "/lib/purchasedServers";
+import { loadConfig, UpgradeConfig } from "/lib/config";
+
 /**
  * TODO:
  * - factions / augmentations
@@ -188,6 +190,10 @@ export async function main(ns: NS): Promise<void> {
     // ns.ui.openTail()
     ns.print("#### singularityStartup")
 
+    const upgradeConfig = loadConfig<UpgradeConfig>(ns, "upgrade-config.json", {
+        upgradeHome: true,
+        upgradePurchased: true,
+    });
 
     !ns.hasTorRouter() && purchaseTorRouter(ns)
     ns.hasTorRouter() && purchasePrograms(ns)
@@ -198,8 +204,8 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Prioritize upgrading our purchased servers over home
-    upgradePurchasedServers(ns)
-    upgradeHomeServer(ns)
+    upgradeConfig.upgradePurchased && upgradePurchasedServers(ns)
+    upgradeConfig.upgradeHome && upgradeHomeServer(ns)
 
     hackNewServers(ns)
     await backdoorNewServers(ns)

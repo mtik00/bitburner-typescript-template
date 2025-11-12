@@ -4,7 +4,6 @@ import { waitForPIDComplete } from "/lib/scripting";
 import { openServer, sortServers, execHack } from "./helpers";
 import { scanAllServers } from "/lib/scan";
 import { PURCHASED_SERVER_HOSTNAME } from "/lib/const";
-import { upgradePurchasedServers } from "/lib/purchasedServers";
 import { appCount } from "/lib/apps";
 
 const SINGULARITY = true
@@ -104,8 +103,6 @@ export async function main(ns: NS): Promise<void> {
 
   while (true) {
     SINGULARITY && await singularityStartup(ns)
-
-    upgradePurchasedServers(ns)
 
     // Make sure the target is open before we start to hack it.
     if (openServer(ns, options.target, undefined, true)) {
