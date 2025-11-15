@@ -1,5 +1,5 @@
 {
     "upgradeHome": true,
     "upgradePurchased": true,
-    "keepMonies": 33E9
+    "keepMonies": 0
 }
