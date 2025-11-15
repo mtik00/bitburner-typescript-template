@@ -9,7 +9,7 @@ export async function main(ns: NS): Promise<void> {
         const nsCity = city as CityName
         if (!ns.corporation.hasWarehouse(DIVISION_NAME, nsCity)) {
             ns.corporation.purchaseWarehouse(DIVISION_NAME, nsCity)
-            ns.tprintf("Purchased wharehouse for %s", city)
+            ns.tprintf("%s: Purchased wharehouse for %s", ns.getScriptName(), city)
         }
     }
 }

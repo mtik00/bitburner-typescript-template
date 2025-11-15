@@ -8,6 +8,6 @@ export async function main(ns: NS): Promise<void> {
     for (const city of CITY_FACTIONS) {
         const nsCity = city as CityName
         ns.corporation.upgradeWarehouse(DIVISION_NAME, nsCity, 2)
-        ns.tprintf("Upgraded wharehouse for %s", city)
+        ns.tprintf("%s: Upgraded wharehouse for %s", ns.getScriptName(), city)
     }
 }

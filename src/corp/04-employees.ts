@@ -10,6 +10,6 @@ export async function main(ns: NS): Promise<void> {
         ns.corporation.hireEmployee(DIVISION_NAME, nsCity, "Operations")
         ns.corporation.hireEmployee(DIVISION_NAME, nsCity, "Engineer")
         ns.corporation.hireEmployee(DIVISION_NAME, nsCity, "Business")
-        ns.tprintf("Hired initial employees for %s", city)
+        ns.tprintf("%s: Hired initial employees for %s", ns.getScriptName(), city)
     }
 }

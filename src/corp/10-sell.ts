@@ -9,6 +9,6 @@ export async function main(ns: NS): Promise<void> {
         const nsCity = city as CityName
         ns.corporation.sellMaterial(DIVISION_NAME, nsCity, "Plants", "MAX", "MP")
         ns.corporation.sellMaterial(DIVISION_NAME, nsCity, "Food", "MAX", "MP")
-        ns.tprintf("Sell configured in %s", city)
+        ns.tprintf("%s: Sell configured in %s", ns.getScriptName(), city)
     }
 }

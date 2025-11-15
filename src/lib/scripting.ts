@@ -54,3 +54,26 @@ export function enoughRAM(ns: NS, script: string, hostname: string = "home"): bo
 export function isAHackingProcess(proc: ProcessInfo): boolean {
     return proc.filename.includes("hack") || proc.filename.startsWith("h")
 }
+
+const FAILED_STATUS = "FAILED"
+
+export function writeFailedStatus(ns: NS, script: string) {
+    const statusFile = `/logs/tmp-${script}.txt`
+    ns.write(statusFile, FAILED_STATUS, "w")
+}
+
+export function writeStatus(ns: NS, script: string, status: string) {
+    const statusFile = `/logs/tmp-${script}.txt`
+    ns.write(statusFile, status, "w")
+}
+
+export function getStatus(ns: NS, script: string): boolean {
+    const statusFile = `/logs/tmp-${script}.txt`
+    if (ns.fileExists(statusFile)) {
+        const text = ns.read(statusFile)
+        ns.tprintf(">>>>>%s<<<<<", statusFile)
+        ns.tprintf(">>>>>%s<<<<<", text)
+        return text !== FAILED_STATUS
+    }
+    return true
+}

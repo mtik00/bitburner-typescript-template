@@ -8,9 +8,9 @@ export async function main(ns: NS): Promise<void> {
     for (const city of CITY_FACTIONS) {
         try {
             ns.corporation.expandCity(DIVISION_NAME, city as CityName)
-            ns.tprintf("%s expanded to %s", DIVISION_NAME, city)
+            ns.tprintf("%s: %s expanded to %s", ns.getScriptName(), DIVISION_NAME, city)
         } catch (error) {
-
+            // ignore; we probable already expanded
         }
     }
 }

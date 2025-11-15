@@ -1,6 +1,7 @@
 import { NS, CityName } from "@ns";
 import { CORP_NAME, DIVISIONS } from "/corp/const";
 import { waitForPIDComplete } from "/lib/scripting";
+import { getStatus } from "/lib/scripting";
 /**
  * - Start corp
  * - Expand to Aggy
@@ -26,45 +27,45 @@ import { waitForPIDComplete } from "/lib/scripting";
 * - Wait for moral 100, energy 100
  */
 
-// function configureOffice(ns: NS, city: CityName, division: string) {
-//     ns.corporation.hireEmployee(division, city, "Operations")
-//     ns.corporation.hireEmployee(division, city, "Engineer")
-//     ns.corporation.hireEmployee(division, city, "Business")
-//     ns.corporation.purchaseWarehouse(division, city)
-//     ns.corporation.upgradeWarehouse(division, city, 2)
+const SCRIPTS = [
+    "/corp/01-corp.js",
+    "/corp/02-division.js",
+    "/corp/03-expand-division.js",
+    "/corp/04-employees.js",
+    "/corp/05-purchase-wharehouses.js",
+    "/corp/06-upgrade-wharehouses.js",
+    "/corp/07-buy.js",
+    "/corp/08-smart-supply.js",
+    "/corp/09-smart-supply-cities.js",
+    "/corp/10-sell.js",
+    "/corp/11-advert.js",
+    "/corp/12-upgrades.js",
+]
 
-//     ns.corporation.bulkPurchase(division, city, "Hardware", 125)
-//     ns.corporation.bulkPurchase(division, city, "AI Cores", 75)
-//     ns.corporation.bulkPurchase(division, city, "Real Estate", 27000)
-
-//     ns.corporation.setSmartSupply(division, city, true)
-//     ns.corporation.sellProduct(division, city, "Plants", "MAX", "MP", false)
-//     ns.corporation.sellProduct(division, city, "Food", "MAX", "MP", false)
-// }
-
-export async function main(ns: NS): Promise<void> {
-    if (!ns.corporation.hasCorporation()) {
-        if (!ns.corporation.canCreateCorporation(false)) {
-            ns.tprintf("ERROR: You cannot create a corporation")
-            return
-        }
-        const wasCreated = ns.corporation.createCorporation(CORP_NAME, false)
-        if (!wasCreated) {
-            ns.tprintf("ERROR: Could not create corpration")
-            return
-        }
-    }
-
-    const mem = ns.getScriptRam("/corp/startIndustry.js")
+async function exec(ns: NS, script: string): Promise<boolean> {
+    const mem = ns.getScriptRam(script)
     if ((ns.getServerMaxRam("home") - ns.getServerUsedRam("home")) < mem) {
         ns.tprintf("ERROR: Not enough ram to run /corp/startIndustry.js")
+        return false
     } else {
-        const pid = ns.run("/corp/startIndustry.js")
+        const pid = ns.run(script)
         if (pid === 0) {
-            ns.tprint("Could not run /corp/startIndustry.js")
+            ns.tprintf("Could not run %s (pid 0)", script)
+            return false
         } else {
             await waitForPIDComplete(ns, pid)
-            ns.tprintf("%s OK", DIVISIONS[0])
+            return getStatus(ns, script)
+        }
+    }
+}
+
+
+export async function main(ns: NS): Promise<void> {
+    for (const script of SCRIPTS) {
+        const ok = await exec(ns, script)
+        if (!ok) {
+            ns.tprintf("stopping loop")
+            break
         }
     }
 }

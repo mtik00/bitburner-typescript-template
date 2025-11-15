@@ -8,6 +8,6 @@ export async function main(ns: NS): Promise<void> {
     for (const city of CITY_FACTIONS) {
         const nsCity = city as CityName
         ns.corporation.setSmartSupply(DIVISION_NAME, nsCity, true)
-        ns.tprintf("Smart supply configured in %s", city)
+        ns.tprintf("%s: Smart supply configured in %s", ns.getScriptName(), city)
     }
 }

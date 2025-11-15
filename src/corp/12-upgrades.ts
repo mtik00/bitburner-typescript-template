@@ -1,21 +1,45 @@
-import { NS, CityName } from "@ns";
-import { DIVISIONS } from "/corp/const";
-import { CITY_FACTIONS } from "/lib/const";
+import { NS } from "@ns";
+import { writeFailedStatus } from "/lib/scripting";
 
-const DIVISION_NAME = DIVISIONS[0]
+const UPGRADES = [
+    "FocusWires",
+    "Neural Accelerators",
+    "Speech Processor Implants",
+    "Nuoptimal Nootropic Injector Implants",
+    "Smart Factories",
+]
 
 export async function main(ns: NS): Promise<void> {
-    ns.corporation.levelUpgrade("FocusWires")
-    ns.corporation.levelUpgrade("Neural Accelerators")
-    ns.corporation.levelUpgrade("Speech Processor Implants")
-    ns.corporation.levelUpgrade("Nuoptimal Nootropic Injector Implants")
-    ns.corporation.levelUpgrade("Smart Factories")
 
-    // ns.corporation.levelUpgrade("FocusWires")
-    // ns.corporation.levelUpgrade("Neural Accelerators")
-    // ns.corporation.levelUpgrade("Speech Processor Implants")
-    // ns.corporation.levelUpgrade("Nuoptimal Nootropic Injector Implants")
-    // ns.corporation.levelUpgrade("Smart Factories")
+    for (const upgrade of UPGRADES) {
+        const currentLevel = ns.corporation.getUpgradeLevel(upgrade)
+        if (currentLevel === 0) {
+            try {
+                ns.corporation.levelUpgrade(upgrade)
+            } catch (error) {
+                ns.tprintf("ERROR %s: Failed to purchase 1st upgrade: %s", ns.getScriptName(), upgrade)
+                writeFailedStatus(ns, ns.getScriptName())
+                return
+            }
+        } else {
+            ns.tprintf("%s: upgrade '%s' already at %s", ns.getScriptName(), upgrade, currentLevel)
+        }
+    }
+
+    for (const upgrade of UPGRADES) {
+        const currentLevel = ns.corporation.getUpgradeLevel(upgrade)
+        if (currentLevel === 1) {
+            try {
+                ns.corporation.levelUpgrade(upgrade)
+            } catch (error) {
+                ns.tprintf("ERROR %s: Failed to purchase 1st upgrade: %s", ns.getScriptName(), upgrade)
+                writeFailedStatus(ns, ns.getScriptName())
+                return
+            }
+        } else {
+            ns.tprintf("%s: upgrade '%s' already at %s", ns.getScriptName(), upgrade, currentLevel)
+        }
+    }
 
     ns.tprintf("Upgrades purchased")
 }
