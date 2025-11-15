@@ -62,10 +62,13 @@ async function exec(ns: NS, script: string): Promise<boolean> {
 
 export async function main(ns: NS): Promise<void> {
     for (const script of SCRIPTS) {
+        ns.tprintf("-------- Executing %s", script)
         const ok = await exec(ns, script)
         if (!ok) {
             ns.tprintf("stopping loop")
             break
         }
     }
+
+    ns.tprint("-------- Startup complete")
 }

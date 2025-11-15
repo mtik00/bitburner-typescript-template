@@ -1,6 +1,7 @@
 import { NS, CityName } from "@ns";
 import { DIVISIONS } from "/corp/const";
 import { CITY_FACTIONS } from "/lib/const";
+import { writeFailedStatus } from "/lib/scripting";
 
 const DIVISION_NAME = DIVISIONS[0]
 
@@ -16,11 +17,17 @@ export async function main(ns: NS): Promise<void> {
         const nsCity = city as CityName
 
         for (const key in Upgrades) {
-            ns.corporation.bulkPurchase(DIVISION_NAME, nsCity, key, Upgrades.get(key) as number)
+            const need = Upgrades.get(key) as number - ns.corporation.getMaterial(DIVISION_NAME, nsCity, key).stored
+
+            if (need > 0) {
+                try {
+                    ns.corporation.bulkPurchase(DIVISION_NAME, nsCity, key, need)
+                    ns.tprintf("%s: Bought %s of %s for %s", ns.getScriptName(), need, key, city)
+                } catch (error) {
+                    writeFailedStatus(ns, ns.getScriptName())
+                    ns.tprintf("ERROR %s: Could not buy %s of %s for %s", ns.getScriptName(), need, key, city)
+                }
+            }
         }
-        ns.corporation.bulkPurchase(DIVISION_NAME, nsCity, "Hardware", 125)
-        ns.corporation.bulkPurchase(DIVISION_NAME, nsCity, "AI Cores", 75)
-        ns.corporation.bulkPurchase(DIVISION_NAME, nsCity, "Real Estate", 27000)
-        ns.tprintf("%s: Bought materials for %s", ns.getScriptName(), city)
     }
 }

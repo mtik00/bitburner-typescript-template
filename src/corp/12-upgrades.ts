@@ -16,6 +16,7 @@ export async function main(ns: NS): Promise<void> {
         if (currentLevel === 0) {
             try {
                 ns.corporation.levelUpgrade(upgrade)
+                ns.tprintf("%s: Upgraded %s to %s", ns.getScriptName(), upgrade, 1)
             } catch (error) {
                 ns.tprintf("ERROR %s: Failed to purchase 1st upgrade: %s", ns.getScriptName(), upgrade)
                 writeFailedStatus(ns, ns.getScriptName())
@@ -31,6 +32,7 @@ export async function main(ns: NS): Promise<void> {
         if (currentLevel === 1) {
             try {
                 ns.corporation.levelUpgrade(upgrade)
+                ns.tprintf("%s: Upgraded %s to %s", ns.getScriptName(), upgrade, 2)
             } catch (error) {
                 ns.tprintf("ERROR %s: Failed to purchase 1st upgrade: %s", ns.getScriptName(), upgrade)
                 writeFailedStatus(ns, ns.getScriptName())
@@ -40,6 +42,4 @@ export async function main(ns: NS): Promise<void> {
             ns.tprintf("%s: upgrade '%s' already at %s", ns.getScriptName(), upgrade, currentLevel)
         }
     }
-
-    ns.tprintf("Upgrades purchased")
 }
