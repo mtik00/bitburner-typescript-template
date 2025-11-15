@@ -1,4 +1,0 @@
-{
-    "upgradeHome": true,
-    "upgradePurchased": true
-}

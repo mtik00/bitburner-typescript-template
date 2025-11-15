@@ -1,14 +1,16 @@
 import { NS } from "@ns";
 
-export interface UpgradeConfig {
-    upgradeHome?: boolean;
-    upgradePurchased?: boolean;
+export interface GameConfig {
+    upgradeHome?: boolean
+    upgradePurchased?: boolean
+    keepMonies?: number
 }
 
-export function getUpgradeConfig(ns: NS): UpgradeConfig {
-    return loadConfig<UpgradeConfig>(ns, "/lib/upgrade-config.txt", {
+export function getGameConfig(ns: NS): GameConfig {
+    return loadConfig<GameConfig>(ns, "/lib/game-config.txt", {
         upgradeHome: true,
         upgradePurchased: true,
+        keepMonies: 0,
     });
 }
 
