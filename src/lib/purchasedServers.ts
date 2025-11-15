@@ -1,5 +1,6 @@
 import { NS } from "@ns";
 import { PURCHASED_SERVER_HOSTNAME, MAXRAM, DEBUG } from "/lib/const";
+import { getMoney } from "/lib/player";
 
 export function purchasedHostnameFromIndex(ns: NS, index: number): string {
     return ns.sprintf("%s-%03i", PURCHASED_SERVER_HOSTNAME, index)
@@ -82,7 +83,7 @@ export function upgradePurchasedServers(ns: NS) {
     }
 
     DEBUG && ns.print(`ram: ${ns.formatRam(ram)}; cost: ${ns.formatNumber(cost, 2)}`)
-    if (ram > MAXRAM || (cost > ns.getPlayer().money)) {
+    if (ram > MAXRAM || (cost > getMoney(ns))) {
         return
     }
 
@@ -93,7 +94,7 @@ export function upgradePurchasedServers(ns: NS) {
         idx += 1
 
         const testCost = pservCost(ns, ram * 2, purchasedServers)
-        if (testCost < ns.getPlayer().money) {
+        if (testCost < getMoney(ns)) {
             ram *= 2
             cost = testCost
         } else {
@@ -101,7 +102,7 @@ export function upgradePurchasedServers(ns: NS) {
         }
     }
 
-    if (cost > ns.getPlayer().money) {
+    if (cost > getMoney(ns)) {
         ns.tprintf("ERROR: Bad calculation in upgradePurchasedServers")
         ns.tprintf("ERROR: ram: %s; cost %s", ns.formatRam(ram), ns.formatNumber(cost, 2))
         return

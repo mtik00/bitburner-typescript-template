@@ -7,6 +7,7 @@ import { appCount } from "/lib/apps";
 import { PROGRAMS, SAFE_FACTIONS } from "/lib/const";
 import { upgradePurchasedServers } from "/lib/purchasedServers";
 import { getGameConfig } from "/lib/config";
+import { getMoney } from "/lib/player";
 
 /**
  * TODO:
@@ -43,7 +44,7 @@ function purchasePrograms(ns: NS) {
         }
 
         const cost = ns.singularity.getDarkwebProgramCost(program)
-        const money = ns.getPlayer().money
+        const money = getMoney(ns)
 
         if (cost <= money) {
             const success = ns.singularity.purchaseProgram(program);
@@ -167,7 +168,7 @@ function upgradeHomeServer(ns: NS) {
     const cost = ns.singularity.getUpgradeHomeRamCost()
     if (cost === Infinity || cost === undefined) {
         return
-    } else if (ns.getPlayer().money > cost) {
+    } else if (getMoney(ns) > cost) {
         ns.singularity.upgradeHomeRam()
         currentRam = ns.getServerMaxRam("home")
         ns.tprintf("home upgraded to %s", ns.formatRam(currentRam))
@@ -175,7 +176,7 @@ function upgradeHomeServer(ns: NS) {
 }
 
 function purchaseTorRouter(ns: NS) {
-    if (ns.getPlayer().money > 300000) {
+    if (getMoney(ns) > 300000) {
         const success = ns.singularity.purchaseTor()
         if (!success) {
             ns.tprint(`ERROR: Failed to purchase TOR`)

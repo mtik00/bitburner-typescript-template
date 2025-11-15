@@ -98,7 +98,8 @@ export async function main(ns: NS): Promise<void> {
     if (!gameConfig.upgradePurchased) {
         ns.tprintf("WARN: purchased server upgrades are disabled")
     } else if (nextUpgrade.cost !== undefined) {
-        ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
+        const keep =
+            ns.tprintf("Next purchased server upgrade: %s for $%s", ns.formatRam(nextUpgrade.ram), ns.formatNumber(nextUpgrade.cost, 2))
     } else {
         ns.tprintf("🥳 No more purchased server upgrades available!")
     }
@@ -152,10 +153,6 @@ export async function main(ns: NS): Promise<void> {
         )
     }
 
-    if (gameConfig.keepMonies) {
-        ns.tprintf("Keeping $%s in your rainy day fund", ns.formatNumber(gameConfig.keepMonies))
-    }
-
     const augsNeeded = 31 - ns.singularity.getOwnedAugmentations().length
     if (augsNeeded <= 0) {
         ns.tprintf("🥳 You have enough augmentations (%i) to flee!", ns.singularity.getOwnedAugmentations().length)
@@ -163,7 +160,9 @@ export async function main(ns: NS): Promise<void> {
         ns.tprintf("You need %s more augmentations to flee", augsNeeded)
     }
 
-
+    if (gameConfig.keepMonies) {
+        ns.tprintf("Keeping $%s in your rainy day fund", ns.formatNumber(gameConfig.keepMonies))
+    }
 
     // Who's getting hacked, and how many threads
     const status = hackStatus(ns)
