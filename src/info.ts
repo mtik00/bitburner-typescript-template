@@ -170,6 +170,18 @@ export async function main(ns: NS): Promise<void> {
         ns.tprintf("Hacking %s with %s threads", value.host, value.threads)
     })
 
+    try {
+        const w0rld = ns.getServer("w0r1d_d43m0n")
+        const need = (w0rld.requiredHackingSkill || 0) - ns.getPlayer().skills.hacking
+        if (need > 0) {
+            ns.tprintf("Need %i more hack to backdoor w0r1d_d43m0n (%s)", need, w0rld.requiredHackingSkill)
+        } else if (need) {
+            ns.tprint("🥳 You have enough hack to backdoor w0r1d_d43m0n!")
+        }
+    } catch (error) {
+
+    }
+
     ns.tprintf("*********************************************")
     ns.tprintf("\n\n")
 }
