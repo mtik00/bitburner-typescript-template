@@ -28,24 +28,24 @@ import { getStatus } from "/lib/scripting";
  */
 
 const SCRIPTS = [
-    "/corp/01-corp.js",
-    "/corp/02-division.js",
-    "/corp/03-expand-division.js",
-    "/corp/04-employees.js",
-    "/corp/05-purchase-wharehouses.js",
-    "/corp/06-upgrade-wharehouses.js",
-    "/corp/07-buy.js",
-    "/corp/08-smart-supply.js",
-    "/corp/09-smart-supply-cities.js",
-    "/corp/10-sell.js",
-    "/corp/11-advert.js",
-    "/corp/12-upgrades.js",
+    "/corp/init/01-corp.js",
+    "/corp/init/02-division.js",
+    "/corp/init/03-expand-division.js",
+    "/corp/init/04-employees.js",
+    "/corp/init/05-purchase-wharehouses.js",
+    "/corp/init/06-upgrade-wharehouses.js",
+    "/corp/init/07-buy.js",
+    "/corp/init/08-smart-supply.js",
+    "/corp/init/09-smart-supply-cities.js",
+    "/corp/init/10-sell.js",
+    "/corp/init/11-advert.js",
+    "/corp/init/12-upgrades.js",
 ]
 
 async function exec(ns: NS, script: string): Promise<boolean> {
     const mem = ns.getScriptRam(script)
     if ((ns.getServerMaxRam("home") - ns.getServerUsedRam("home")) < mem) {
-        ns.tprintf("ERROR: Not enough ram to run /corp/startIndustry.js")
+        ns.tprintf("ERROR: Not enough ram to run %s", script)
         return false
     } else {
         const pid = ns.run(script)
