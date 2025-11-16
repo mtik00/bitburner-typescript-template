@@ -1,5 +1,4 @@
 import { NS, CityName } from "@ns";
-import { CORP_NAME, DIVISIONS } from "/corp/const";
 import { waitForPIDComplete } from "/lib/scripting";
 import { getStatus } from "/lib/scripting";
 /**

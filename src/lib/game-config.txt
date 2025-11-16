@@ -1,5 +1,12 @@
 {
     "upgradeHome": true,
     "upgradePurchased": true,
-    "keepMonies": 0
+    "keepMonies": 0,
+    "company": {
+        "initMaterials": {
+            "Hardware": 125,
+            "AI Cores": 75,
+            "Real Estate": 2700
+        }
+    }
 }
